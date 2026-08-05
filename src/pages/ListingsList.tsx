@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { ListingTableToolbar } from '../components/ui/ListingTableToolbar';
 import { ListingTable } from '../components/ui/ListingTable';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { TableToolbar } from '../components/ui/TableToolbar';
 import { Table } from '../components/ui/Table';

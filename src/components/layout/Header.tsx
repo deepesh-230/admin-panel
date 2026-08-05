@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useSidebar } from '../../contexts/SidebarContext';
 import { cn } from '../../utils/cn';
 
