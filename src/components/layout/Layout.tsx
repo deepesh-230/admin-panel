@@ -11,8 +11,8 @@ const LayoutContent = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-bg-light">
       <Sidebar />
       <Header />
-      <main className={cn("pt-16 transition-all duration-300", isCollapsed ? "pl-20" : "pl-64")}>
-        <div className="p-6">
+      <main className={cn("pt-16 transition-all duration-300 w-full", isCollapsed ? "md:pl-20" : "md:pl-64")}>
+        <div className="p-4 md:p-6 overflow-x-auto">
           {children}
         </div>
       </main>

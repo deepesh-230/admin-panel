@@ -68,12 +68,23 @@ const navItems: NavItem[] = [
 ];
 
 export const Sidebar = () => {
-  const { isCollapsed, toggleSidebar } = useSidebar();
+  const { isCollapsed, toggleSidebar, isMobileMenuOpen, setIsMobileMenuOpen } = useSidebar();
 
   return (
-    <aside className={cn("bg-white border-r border-border-light flex flex-col h-screen fixed left-0 top-0 transition-all duration-300 z-20", isCollapsed ? "w-20" : "w-64")}>
-      <div className={`h-16 flex items-center px-4 border-b border-border-light flex-shrink-0 justify-between bg-white`}>
-        <div className={cn("flex items-center gap-2 overflow-hidden", isCollapsed ? "w-0 opacity-0 hidden" : "w-auto opacity-100")}>
+    <>
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/40 z-30 md:hidden transition-opacity"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+      <aside className={cn(
+        "bg-white border-r border-border-light flex flex-col h-screen fixed left-0 top-0 transition-all duration-300 z-40",
+        isMobileMenuOpen ? "translate-x-0 w-64" : "-translate-x-full w-64",
+        isCollapsed ? "md:translate-x-0 md:w-20" : "md:translate-x-0 md:w-64"
+      )}>
+        <div className={`h-16 flex items-center px-4 border-b border-border-light flex-shrink-0 justify-between bg-white`}>
+          <div className={cn("flex items-center gap-2 overflow-hidden", isCollapsed ? "md:w-0 md:opacity-0 md:hidden" : "w-auto opacity-100")}>
           <div className="w-8 h-8 rounded-full border border-blue-200 flex flex-shrink-0 items-center justify-center bg-white shadow-sm overflow-hidden">
             <div className="w-full h-full bg-gradient-to-br from-blue-100 to-red-100 rounded-full flex items-center justify-center">
               <div className="w-3 h-3 bg-red-400 rounded-full"></div>
@@ -82,7 +93,7 @@ export const Sidebar = () => {
         </div>
         <button
           onClick={toggleSidebar}
-          className={`p-1.5 rounded-md hover:bg-gray-100 text-gray-600 transition-colors ${isCollapsed ? "mx-auto" : ""}`}
+          className={`hidden md:block p-1.5 rounded-md hover:bg-gray-100 text-gray-600 transition-colors ${isCollapsed ? "mx-auto" : ""}`}
           title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
           {isCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
@@ -96,6 +107,7 @@ export const Sidebar = () => {
         </nav>
       </div>
     </aside>
+    </>
   );
 };
 
