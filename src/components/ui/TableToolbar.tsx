@@ -1,4 +1,5 @@
 
+import { Plus } from 'lucide-react';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
 
@@ -7,13 +8,15 @@ interface TableToolbarProps {
   setShowCount: (count: number) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  onAdd?: () => void;
 }
 
 export const TableToolbar = ({
   showCount,
   setShowCount,
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
+  onAdd
 }: TableToolbarProps) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 pt-4 px-6">
@@ -49,6 +52,11 @@ export const TableToolbar = ({
         <Button variant="success" className="h-10 bg-[#22c55e] hover:bg-[#16a34a]">
           Export
         </Button>
+        {onAdd && (
+          <Button onClick={onAdd} variant="primary" className="h-10 bg-[#8b5cf6] hover:bg-[#7c3aed]" icon={<Plus size={16} />}>
+            Add Enquiry
+          </Button>
+        )}
       </div>
     </div>
   );

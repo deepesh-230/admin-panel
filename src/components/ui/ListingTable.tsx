@@ -6,9 +6,11 @@ import { ToggleSwitch } from '../common/ToggleSwitch';
 interface ListingTableProps {
   data: Listing[];
   onToggleStatus: (id: string, newStatus: boolean) => void;
+  onEdit: (item: Listing) => void;
+  onDelete: (id: string) => void;
 }
 
-export const ListingTable = ({ data, onToggleStatus }: ListingTableProps) => {
+export const ListingTable = ({ data, onToggleStatus, onEdit, onDelete }: ListingTableProps) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full text-sm text-left">
@@ -85,10 +87,10 @@ export const ListingTable = ({ data, onToggleStatus }: ListingTableProps) => {
               </td>
               <td className="px-4 py-4">
                 <div className="flex items-center justify-center gap-3">
-                  <button className="text-green-600 hover:text-green-700 p-1 rounded transition-colors" title="Edit">
+                  <button onClick={() => onEdit(row)} className="text-green-600 hover:text-green-700 p-1 rounded transition-colors" title="Edit">
                     <Edit size={16} strokeWidth={2} />
                   </button>
-                  <button className="text-red-500 hover:text-red-600 p-1 rounded transition-colors" title="Delete">
+                  <button onClick={() => onDelete(row.id)} className="text-red-500 hover:text-red-600 p-1 rounded transition-colors" title="Delete">
                     <Trash2 size={16} strokeWidth={2} />
                   </button>
                   <button className="text-green-600 hover:text-green-700 p-1 rounded transition-colors" title="View">

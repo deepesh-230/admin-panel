@@ -1,12 +1,14 @@
 
-import { ArrowDownUp, Trash2, Eye, MessageSquare } from 'lucide-react';
+import { ArrowDownUp, Trash2, Eye, MessageSquare, Edit } from 'lucide-react';
 import type { Enquiry } from '../../types';
 
 interface TableProps {
   data: Enquiry[];
+  onEdit: (item: Enquiry) => void;
+  onDelete: (id: string) => void;
 }
 
-export const Table = ({ data }: TableProps) => {
+export const Table = ({ data, onEdit, onDelete }: TableProps) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full text-sm text-left">
@@ -70,7 +72,10 @@ export const Table = ({ data }: TableProps) => {
               <td className="px-4 py-4 text-gray-600">{row.createdBy}</td>
               <td className="px-4 py-4">
                 <div className="flex items-center justify-center gap-3">
-                  <button className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded transition-colors" title="Delete">
+                  <button onClick={() => onEdit(row)} className="text-green-600 hover:text-green-700 hover:bg-green-50 p-1.5 rounded transition-colors" title="Edit">
+                    <Edit size={16} strokeWidth={2.5} />
+                  </button>
+                  <button onClick={() => onDelete(row.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded transition-colors" title="Delete">
                     <Trash2 size={16} strokeWidth={2.5} />
                   </button>
                   <button className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-1.5 rounded transition-colors" title="View">

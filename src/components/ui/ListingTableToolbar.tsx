@@ -8,13 +8,15 @@ interface ListingTableToolbarProps {
   setShowCount: (count: number) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  onAdd?: () => void;
 }
 
 export const ListingTableToolbar = ({
   showCount,
   setShowCount,
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
+  onAdd
 }: ListingTableToolbarProps) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pt-4 px-6">
@@ -48,10 +50,13 @@ export const ListingTableToolbar = ({
       </div>
       
       <div className="flex items-center">
-        <Button variant="primary" className="h-10 bg-[#8b5cf6] hover:bg-[#7c3aed]" icon={<Plus size={18} />}>
-          Add Product
-        </Button>
+        {onAdd && (
+          <Button onClick={onAdd} variant="primary" className="h-10 bg-[#8b5cf6] hover:bg-[#7c3aed]" icon={<Plus size={18} />}>
+            Add Product
+          </Button>
+        )}
       </div>
     </div>
   );
 };
+

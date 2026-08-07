@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { cn } from '../utils/cn';
 
@@ -31,21 +31,48 @@ const StatCard = ({ title, count, gradient, icon }: StatCardProps) => {
 };
 
 export const Dashboard = () => {
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeUsers: 0,
+    inactiveUsers: 0,
+    totalServiceProviders: 0,
+    activeServiceProviders: 0,
+    inactiveServiceProviders: 0,
+    listings: 0,
+    activeListings: 0,
+    listEnquiries: 0,
+    productEnquiries: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/dashboard/stats')
+      .then(res => res.json())
+      .then(data => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch stats', err);
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <div className="flex flex-col gap-8 max-w-full">
       {/* Top Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatCard title="Total Users" count={43} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
-        <StatCard title="Active Users" count={32} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
-        <StatCard title="Inactive Users" count={11} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
+        <StatCard title="Total Users" count={loading ? '...' : stats.totalUsers} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
+        <StatCard title="Active Users" count={loading ? '...' : stats.activeUsers} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
+        <StatCard title="Inactive Users" count={loading ? '...' : stats.inactiveUsers} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
         
-        <StatCard title="Total Service Providers" count={531} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
-        <StatCard title="Active Service Providers" count={530} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
-        <StatCard title="Inactive Service Providers" count={1} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
+        <StatCard title="Total Service Providers" count={loading ? '...' : stats.totalServiceProviders} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
+        <StatCard title="Active Service Providers" count={loading ? '...' : stats.activeServiceProviders} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
+        <StatCard title="Inactive Service Providers" count={loading ? '...' : stats.inactiveServiceProviders} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
         
-        <StatCard title="Listings" count={9} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
-        <StatCard title="List Enquiry" count={6} gradient="bg-gradient-to-br from-[#f59e0b] to-[#eab308]" />
-        <StatCard title="Product Enquiries" count={10} gradient="bg-gradient-to-br from-[#1e3a5f] to-[#152c4a]" />
+        <StatCard title="Listings" count={loading ? '...' : stats.listings} gradient="bg-gradient-to-br from-[#71638e] to-[#6b5889]" />
+        <StatCard title="List Enquiry" count={loading ? '...' : stats.listEnquiries} gradient="bg-gradient-to-br from-[#f59e0b] to-[#eab308]" />
+        <StatCard title="Product Enquiries" count={loading ? '...' : stats.productEnquiries} gradient="bg-gradient-to-br from-[#1e3a5f] to-[#152c4a]" />
       </div>
 
       {/* Latest 7 days Section */}
