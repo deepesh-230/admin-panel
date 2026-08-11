@@ -1,4 +1,4 @@
-import { Menu, Search, Store } from 'lucide-react';
+import { Menu, Search } from 'lucide-react';
 import { useSampleSidebar } from '../contexts/SampleSidebarContext';
 
 export const SampleHeader = () => {
