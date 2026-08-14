@@ -44,11 +44,22 @@ const navItems: NavItem[] = [
     children: [
       { title: 'Category', icon: <BulletIcon />, href: '/listings/category' },
       { title: 'Sub Category', icon: <BulletIcon />, href: '/listings/sub-category' },
+      { title: 'Service Providers', icon: <BulletIcon />, href: '/listings/providers' },
       { title: 'Listings', icon: <BulletIcon />, href: '/listings/list' },
       { title: 'uploads Listings', icon: <BulletIcon />, href: '/listings/uploads' },
     ]
   },
-  { title: 'User', icon: <User size={20} />, href: '/user' },
+  {
+    title: 'User',
+    icon: <User size={20} />,
+    children: [
+      { title: 'States', icon: <BulletIcon />, href: '/master/states' },
+      { title: 'State Admins', icon: <BulletIcon />, href: '/master/state-admins' },
+      { title: 'Users', icon: <BulletIcon />, href: '/user' },
+      { title: 'Active Users', icon: <BulletIcon />, href: '/user?status=active' },
+      { title: 'Inactive Users', icon: <BulletIcon />, href: '/user?status=inactive' },
+    ]
+  },
   {
     title: 'Enquiries',
     icon: <Users size={20} />,

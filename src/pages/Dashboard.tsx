@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { cn } from '../utils/cn';
+import { apiClient } from '../utils/apiClient';
 
 interface StatCardProps {
   title: string;
   count: number | string;
   gradient: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 }
 
 const StatCard = ({ title, count, gradient, icon }: StatCardProps) => {
@@ -46,13 +47,24 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:3000/dashboard/stats')
-      .then(res => res.json())
-      .then(data => {
+    apiClient
+      .get<{
+        totalUsers: number;
+        activeUsers: number;
+        inactiveUsers: number;
+        totalServiceProviders: number;
+        activeServiceProviders: number;
+        inactiveServiceProviders: number;
+        listings: number;
+        activeListings: number;
+        listEnquiries: number;
+        productEnquiries: number;
+      }>('/api/v1/dashboard/stats')
+      .then((data) => {
         setStats(data);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Failed to fetch stats', err);
         setLoading(false);
       });
