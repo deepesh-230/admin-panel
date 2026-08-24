@@ -5,7 +5,7 @@ import {
   BriefcaseMedical,
   User,
   Shield,
-  // MessageSquareWarning,
+  MessageSquareWarning,
   // Store,
   // HeartHandshake,
   HelpCircle,
