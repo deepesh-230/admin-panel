@@ -111,7 +111,7 @@ export const CategoriesList = () => {
           onClose={() => setToast({ ...toast, visible: false })}
         />
       )}
-      <Breadcrumb title="Category" paths={[{ name: 'Master Data' }, { name: 'Categories' }]} />
+      <Breadcrumb title="Category" paths={[{ name: 'Service Provider' }, { name: 'Category' }]} />
 
       <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-b border-gray-100">

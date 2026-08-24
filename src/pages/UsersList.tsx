@@ -13,7 +13,7 @@ const ROLES = ['END_USER', 'SERVICE_PROVIDER_ADMIN', 'STATE_ADMIN', 'ADMIN'] as 
 
 type StatusTab = 'all' | 'active' | 'inactive';
 
-export const UsersList = () => {
+export const UsersList = ({ lockedRole }: { lockedRole?: string } = {}) => {
   const [searchParams] = useSearchParams();
   const statusFromUrl = searchParams.get('status');
   const initialTab: StatusTab =
@@ -22,7 +22,7 @@ export const UsersList = () => {
   const [items, setItems] = useState<AppUser[]>([]);
   const [states, setStates] = useState<State[]>([]);
   const [search, setSearch] = useState('');
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState(lockedRole || '');
   const [stateId, setStateId] = useState('');
   const [statusTab, setStatusTab] = useState<StatusTab>(initialTab);
   const [page, setPage] = useState(1);
@@ -66,7 +66,7 @@ export const UsersList = () => {
       setLoading(true);
       const data = await usersApi.getAll({
         search,
-        role: role || undefined,
+        role: (lockedRole || role) || undefined,
         stateId: stateId || undefined,
         isActive: statusTab === 'all' ? undefined : statusTab === 'active' ? 'true' : 'false',
         page,
@@ -100,7 +100,7 @@ export const UsersList = () => {
       password: '',
       name: '',
       phone: '',
-      role: 'END_USER',
+      role: lockedRole || 'END_USER',
       stateId: '',
       isActive: true,
     });
@@ -201,7 +201,10 @@ export const UsersList = () => {
           onClose={() => setToast({ ...toast, visible: false })}
         />
       )}
-      <Breadcrumb title="Users" paths={[{ name: 'User Management' }, { name: 'Users' }]} />
+      <Breadcrumb
+        title="Listing"
+        paths={[{ name: lockedRole === 'END_USER' ? 'App user' : 'User Management' }, { name: 'Listing' }]}
+      />
 
       <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
         <div className="flex flex-wrap gap-2 p-4 border-b border-gray-100">
@@ -241,6 +244,7 @@ export const UsersList = () => {
                 className="h-10 w-56 pl-9 pr-3 rounded-md border border-gray-300 text-sm"
               />
             </div>
+            {!lockedRole && (
             <select
               value={role}
               onChange={(e) => {
@@ -256,6 +260,7 @@ export const UsersList = () => {
                 </option>
               ))}
             </select>
+            )}
             <select
               value={stateId}
               onChange={(e) => {
@@ -411,6 +416,7 @@ export const UsersList = () => {
               className="w-full h-10 px-3 rounded-md border border-gray-300 text-sm"
             />
           </div>
+          {!lockedRole && (
           <div>
             <label className="block text-sm font-medium mb-1">Role *</label>
             <select
@@ -426,6 +432,7 @@ export const UsersList = () => {
               ))}
             </select>
           </div>
+          )}
           <div>
             <label className="block text-sm font-medium mb-1">State</label>
             <select

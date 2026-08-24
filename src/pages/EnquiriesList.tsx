@@ -7,7 +7,12 @@ import { EnquiryForm } from '../components/ui/EnquiryForm';
 import { enquiriesApi } from '../api/enquiries';
 import type { Enquiry } from '../types';
 
-export const EnquiriesList = () => {
+type Props = {
+  kind: 'USER' | 'PROVIDER';
+  title: string;
+};
+
+export const EnquiriesList = ({ kind, title }: Props) => {
   const [showCount, setShowCount] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
   const [enquiriesData, setEnquiriesData] = useState<Enquiry[]>([]);
@@ -21,7 +26,7 @@ export const EnquiriesList = () => {
   const fetchEnquiries = async () => {
     try {
       setLoading(true);
-      const data = await enquiriesApi.getAll(searchQuery);
+      const data = await enquiriesApi.getAll(searchQuery, kind);
       setEnquiriesData(data);
     } catch (err) {
       console.error('Failed to fetch enquiries', err);
@@ -33,7 +38,7 @@ export const EnquiriesList = () => {
   useEffect(() => {
     const timeoutId = setTimeout(fetchEnquiries, 300);
     return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+  }, [searchQuery, kind]);
 
   const handleAdd = () => {
     setEditingEnquiry(null);
@@ -62,7 +67,7 @@ export const EnquiriesList = () => {
       if (editingEnquiry) {
         await enquiriesApi.update(editingEnquiry.id, data);
       } else {
-        await enquiriesApi.create(data);
+        await enquiriesApi.create({ ...data, kind });
       }
       setIsModalOpen(false);
       fetchEnquiries();
@@ -75,9 +80,9 @@ export const EnquiriesList = () => {
 
   return (
     <div className="flex flex-col h-full max-w-full">
-      <Breadcrumb 
-        title="Enquiry List" 
-        paths={[{ name: "List Enquiry" }]} 
+      <Breadcrumb
+        title={title}
+        paths={[{ name: 'Enquiry' }, { name: title }]}
       />
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 flex-1 flex flex-col mb-4 overflow-hidden">

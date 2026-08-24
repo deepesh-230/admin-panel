@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
-  List,
+  BriefcaseMedical,
   User,
-  Users,
+  Shield,
+  MessageSquareWarning,
+  Store,
+  HeartHandshake,
   HelpCircle,
   Link as LinkIcon,
   LifeBuoy,
   FileText,
-  MessageSquare,
+  Newspaper,
   Briefcase,
   Lightbulb,
-  TrendingUp,
   ChevronRight,
   ChevronDown,
   PanelLeftClose,
@@ -38,44 +40,53 @@ const BulletIcon = () => (
 const navItems: NavItem[] = [
   { title: 'Dashboard', icon: <LayoutDashboard size={20} />, href: '/dashboard' },
   {
-    title: 'Listings',
-    icon: <List size={20} />,
-    isExpanded: true,
+    title: 'Service Provider',
+    icon: <BriefcaseMedical size={20} />,
     children: [
-      { title: 'Category', icon: <BulletIcon />, href: '/listings/category' },
-      { title: 'Sub Category', icon: <BulletIcon />, href: '/listings/sub-category' },
-      { title: 'Service Providers', icon: <BulletIcon />, href: '/listings/providers' },
-      { title: 'Listings', icon: <BulletIcon />, href: '/listings/list' },
-      { title: 'uploads Listings', icon: <BulletIcon />, href: '/listings/uploads' },
-    ]
+      { title: 'Category', icon: <BulletIcon />, href: '/service-provider/category' },
+      { title: 'Sub Category', icon: <BulletIcon />, href: '/service-provider/sub-category' },
+      { title: 'Listing', icon: <BulletIcon />, href: '/service-provider/listing' },
+    ],
   },
   {
-    title: 'User',
+    title: 'App user',
     icon: <User size={20} />,
     children: [
-      { title: 'States', icon: <BulletIcon />, href: '/master/states' },
-      { title: 'State Admins', icon: <BulletIcon />, href: '/master/state-admins' },
-      { title: 'Users', icon: <BulletIcon />, href: '/user' },
-      { title: 'Active Users', icon: <BulletIcon />, href: '/user?status=active' },
-      { title: 'Inactive Users', icon: <BulletIcon />, href: '/user?status=inactive' },
-    ]
+      { title: 'Listing', icon: <BulletIcon />, href: '/app-users' },
+    ],
   },
   {
-    title: 'Enquiries',
-    icon: <Users size={20} />,
+    title: 'State Admin',
+    icon: <Shield size={20} />,
     children: [
-      { title: 'Listing Enquiries', icon: <BulletIcon />, href: '/enquiries/listing' },
-      { title: 'Product Enquiries', icon: <BulletIcon />, href: '/enquiries/product' },
-    ]
+      { title: 'Listing', icon: <BulletIcon />, href: '/state-admins' },
+    ],
   },
-  { title: 'Faq', icon: <HelpCircle size={20} />, href: '/faq' },
-  { title: 'Useful links', icon: <LinkIcon size={20} />, href: '/useful-links' },
+  {
+    title: 'Enquiry',
+    icon: <MessageSquareWarning size={20} />,
+    children: [
+      { title: 'User enquiry', icon: <BulletIcon />, href: '/enquiries/user' },
+      { title: 'Service provider', icon: <BulletIcon />, href: '/enquiries/provider' },
+    ],
+  },
+  {
+    title: 'Market Place',
+    icon: <Store size={20} />,
+    children: [
+      { title: 'Product listing', icon: <BulletIcon />, href: '/marketplace/products' },
+      { title: 'Buyer', icon: <BulletIcon />, href: '/marketplace/buyers' },
+      { title: 'Seller', icon: <BulletIcon />, href: '/marketplace/sellers' },
+    ],
+  },
+  { title: 'Volunteer Admin', icon: <HeartHandshake size={20} />, href: '/volunteers' },
+  { title: 'FAQ', icon: <HelpCircle size={20} />, href: '/faq' },
+  { title: 'Useful link', icon: <LinkIcon size={20} />, href: '/useful-links' },
   { title: 'Help & support', icon: <LifeBuoy size={20} />, href: '/support' },
   { title: 'Pages', icon: <FileText size={20} />, href: '/pages' },
-  { title: 'Blog', icon: <MessageSquare size={20} />, href: '/blog' },
-  { title: 'Job Alerts', icon: <Briefcase size={20} />, href: '/jobs' },
+  { title: 'Blogs', icon: <Newspaper size={20} />, href: '/blogs' },
+  { title: 'Job alerts', icon: <Briefcase size={20} />, href: '/jobs' },
   { title: 'Suggestions', icon: <Lightbulb size={20} />, href: '/suggestions' },
-  { title: 'Sales List', icon: <TrendingUp size={20} />, href: '/sales' },
 ];
 
 export const Sidebar = () => {

@@ -2,8 +2,11 @@ import { apiClient } from '../utils/apiClient';
 import type { Enquiry } from '../types';
 
 export const enquiriesApi = {
-  getAll: (searchQuery?: string) => {
-    const query = searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : '';
+  getAll: (searchQuery?: string, kind?: string) => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set('search', searchQuery);
+    if (kind) params.set('kind', kind);
+    const query = params.toString() ? `?${params.toString()}` : '';
     return apiClient.get<Enquiry[]>(`/api/v1/enquiries${query}`);
   },
 

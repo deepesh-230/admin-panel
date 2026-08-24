@@ -1,6 +1,7 @@
 export interface Enquiry {
   id: string;
   sNo: number;
+  kind?: string;
   category: string;
   subCategory: string;
   product: string;

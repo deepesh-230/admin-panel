@@ -364,8 +364,8 @@ export const ServiceProvidersList = () => {
       )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Breadcrumb
-          title="Service Providers"
-          paths={[{ name: 'Listings' }, { name: 'Service Providers' }]}
+          title="Listing"
+          paths={[{ name: 'Service Provider' }, { name: 'Listing' }]}
         />
         <Button onClick={openCreate} icon={<Plus size={16} />}>
           Add Provider
