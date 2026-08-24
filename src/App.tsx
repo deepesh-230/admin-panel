@@ -63,6 +63,7 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/service-provider/category" element={<CategoriesList />} />
                     <Route path="/service-provider/sub-category" element={<SubcategoriesList />} />
+                    <Route path="/service-provider/listing" element={<ServiceProvidersList />} />
                     <Route path="/emergency/category" element={<Navigate to="/service-provider/category" replace />} />
                     <Route path="/emergency/sub-category" element={<Navigate to="/service-provider/sub-category" replace />} />
                     <Route path="/emergency/listing" element={<Navigate to="/service-provider/listing" replace />} />
