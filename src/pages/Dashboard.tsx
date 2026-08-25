@@ -43,6 +43,9 @@ export const Dashboard = () => {
     activeListings: 0,
     listEnquiries: 0,
     productEnquiries: 0,
+    last7ActiveUsers: 0,
+    last7ActiveServiceProviders: 0,
+    last7ActiveListings: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -59,6 +62,9 @@ export const Dashboard = () => {
         activeListings: number;
         listEnquiries: number;
         productEnquiries: number;
+        last7ActiveUsers: number;
+        last7ActiveServiceProviders: number;
+        last7ActiveListings: number;
       }>('/api/v1/dashboard/stats')
       .then((data) => {
         setStats(data);
@@ -93,19 +99,19 @@ export const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard 
             title="Active Users" 
-            count="" 
+            count={loading ? '...' : stats.last7ActiveUsers} 
             gradient="bg-gradient-to-br from-[#0f172a] to-[#1e293b]" 
             icon={<ShoppingCart size={24} />} 
           />
           <StatCard 
             title="Active Service Providers" 
-            count="" 
+            count={loading ? '...' : stats.last7ActiveServiceProviders} 
             gradient="bg-gradient-to-br from-[#10b981] to-[#34d399]" 
             icon={<ShoppingCart size={24} />} 
           />
           <StatCard 
             title="Active Listings" 
-            count="" 
+            count={loading ? '...' : stats.last7ActiveListings} 
             gradient="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24]" 
             icon={<ShoppingCart size={24} />} 
           />
