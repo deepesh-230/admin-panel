@@ -10,6 +10,7 @@ import { ResetPassword } from './pages/ResetPassword';
 import { CategoriesList } from './pages/CategoriesList';
 import { SubcategoriesList } from './pages/SubcategoriesList';
 import { StateAdminsList } from './pages/StateAdminsList';
+import { VolunteerAdminsList } from './pages/VolunteerAdminsList';
 import { UsersList } from './pages/UsersList';
 import { ServiceProvidersList } from './pages/ServiceProvidersList';
 import {
@@ -68,7 +69,9 @@ function App() {
                     <Route path="/emergency/sub-category" element={<Navigate to="/service-provider/sub-category" replace />} />
                     <Route path="/emergency/listing" element={<Navigate to="/service-provider/listing" replace />} />
                     <Route path="/app-users" element={<UsersList lockedRole="END_USER" />} />
+                    <Route path="/provider-admins" element={<UsersList lockedRole="SERVICE_PROVIDER_ADMIN" title="Provider admins" parent="Service Provider" />} />
                     <Route path="/state-admins" element={<StateAdminsList />} />
+                    <Route path="/volunteer-admins" element={<VolunteerAdminsList />} />
                     <Route path="/enquiries/user" element={<EnquiriesList kind="USER" title="User enquiry" />} />
                     <Route
                       path="/enquiries/provider"

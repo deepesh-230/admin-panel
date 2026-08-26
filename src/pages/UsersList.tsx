@@ -13,7 +13,15 @@ const ROLES = ['END_USER', 'SERVICE_PROVIDER_ADMIN', 'STATE_ADMIN', 'ADMIN'] as 
 
 type StatusTab = 'all' | 'active' | 'inactive';
 
-export const UsersList = ({ lockedRole }: { lockedRole?: string } = {}) => {
+export const UsersList = ({
+  lockedRole,
+  title = 'Listing',
+  parent,
+}: {
+  lockedRole?: string;
+  title?: string;
+  parent?: string;
+} = {}) => {
   const [searchParams] = useSearchParams();
   const statusFromUrl = searchParams.get('status');
   const initialTab: StatusTab =
@@ -192,6 +200,14 @@ export const UsersList = ({ lockedRole }: { lockedRole?: string } = {}) => {
     }
   };
 
+  const parentLabel =
+    parent ||
+    (lockedRole === 'END_USER'
+      ? 'App user'
+      : lockedRole === 'SERVICE_PROVIDER_ADMIN'
+        ? 'Service Provider'
+        : 'User Management');
+
   return (
     <div className="flex flex-col max-w-full">
       {toast.visible && (
@@ -202,8 +218,8 @@ export const UsersList = ({ lockedRole }: { lockedRole?: string } = {}) => {
         />
       )}
       <Breadcrumb
-        title="Listing"
-        paths={[{ name: lockedRole === 'END_USER' ? 'App user' : 'User Management' }, { name: 'Listing' }]}
+        title={title}
+        paths={[{ name: parentLabel }, { name: 'Listing' }]}
       />
 
       <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">

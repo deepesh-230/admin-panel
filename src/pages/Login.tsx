@@ -1,12 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { homePathForRole, useAuth } from '../contexts/AuthContext';
+import { getStoredUser } from '../utils/apiClient';
 
 export const Login = () => {
   const { login, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from || '/dashboard';
+  const from = (location.state as { from?: string } | null)?.from;
 
   const [email, setEmail] = useState('admin@divyaangdisha.com');
   const [password, setPassword] = useState('Admin@123');
@@ -14,7 +15,8 @@ export const Login = () => {
   const [submitting, setSubmitting] = useState(false);
 
   if (!loading && isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    const role = getStoredUser()?.role || 'ADMIN';
+    return <Navigate to={from || homePathForRole(role)} replace />;
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -22,8 +24,8 @@ export const Login = () => {
     setError('');
     setSubmitting(true);
     try {
-      await login(email.trim(), password);
-      navigate(from, { replace: true });
+      const home = await login(email.trim(), password);
+      navigate(from || home, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

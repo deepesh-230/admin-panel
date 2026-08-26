@@ -18,6 +18,7 @@ import {
   type ProviderApprovalStatus,
   type ServiceProvider,
 } from '../api/serviceProviders';
+import { useAuth } from '../contexts/AuthContext';
 
 const APPROVAL_TABS: { key: 'all' | ProviderApprovalStatus; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -58,6 +59,8 @@ const statusBadge = (status: ProviderApprovalStatus) => {
 };
 
 export const ServiceProvidersList = () => {
+  const { user } = useAuth();
+  const isProviderAdmin = user?.role === 'SERVICE_PROVIDER_ADMIN';
   const [items, setItems] = useState<ServiceProvider[]>([]);
   const [states, setStates] = useState<State[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -367,11 +370,12 @@ export const ServiceProvidersList = () => {
           title="Listing"
           paths={[{ name: 'Service Provider' }, { name: 'Listing' }]}
         />
-        <Button onClick={openCreate} icon={<Plus size={16} />}>
+        <Button onClick={openCreate} icon={<Plus size={16} />} className={isProviderAdmin ? 'hidden' : ''}>
           Add Provider
         </Button>
       </div>
 
+      {!isProviderAdmin && (
       <div className="flex flex-wrap gap-2">
         {APPROVAL_TABS.map((tab) => (
           <button
@@ -391,6 +395,7 @@ export const ServiceProvidersList = () => {
           </button>
         ))}
       </div>
+      )}
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-3 lg:flex-row">
@@ -511,7 +516,7 @@ export const ServiceProvidersList = () => {
               <th className="px-4 py-3 font-medium">Distance</th>
               <th className="px-4 py-3 font-medium">Approval</th>
               <th className="px-4 py-3 font-medium">Active</th>
-              <th className="px-4 py-3 font-medium">Admins</th>
+              {!isProviderAdmin && <th className="px-4 py-3 font-medium">Admins</th>}
               <th className="px-4 py-3 font-medium text-right">Actions</th>
             </tr>
           </thead>
@@ -554,12 +559,17 @@ export const ServiceProvidersList = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <ToggleSwitch checked={item.isActive} onChange={() => handleToggleActive(item)} />
+                    {!isProviderAdmin && (
+                      <ToggleSwitch checked={item.isActive} onChange={() => handleToggleActive(item)} />
+                    )}
+                    {isProviderAdmin && (
+                      <span className="text-xs text-slate-500">{item.isActive ? 'Active' : 'Inactive'}</span>
+                    )}
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{item.adminCount ?? 0}</td>
+                  {!isProviderAdmin && <td className="px-4 py-3 text-slate-600">{item.adminCount ?? 0}</td>}
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-1">
-                      {item.approvalStatus !== 'APPROVED' && (
+                      {!isProviderAdmin && item.approvalStatus !== 'APPROVED' && (
                         <button
                           type="button"
                           title="Approve"
@@ -569,7 +579,7 @@ export const ServiceProvidersList = () => {
                           <Check size={16} />
                         </button>
                       )}
-                      {item.approvalStatus !== 'REJECTED' && (
+                      {!isProviderAdmin && item.approvalStatus !== 'REJECTED' && (
                         <button
                           type="button"
                           title="Reject"
@@ -579,6 +589,7 @@ export const ServiceProvidersList = () => {
                           <X size={16} />
                         </button>
                       )}
+                      {!isProviderAdmin && (
                       <button
                         type="button"
                         title="Admins"
@@ -587,6 +598,7 @@ export const ServiceProvidersList = () => {
                       >
                         <UserPlus size={16} />
                       </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => openEdit(item)}
@@ -594,6 +606,7 @@ export const ServiceProvidersList = () => {
                       >
                         <Pencil size={16} />
                       </button>
+                      {!isProviderAdmin && (
                       <button
                         type="button"
                         onClick={() => handleDelete(item)}
@@ -601,6 +614,7 @@ export const ServiceProvidersList = () => {
                       >
                         <Trash2 size={16} />
                       </button>
+                      )}
                     </div>
                   </td>
                 </tr>

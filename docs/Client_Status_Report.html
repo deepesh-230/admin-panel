@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Divyaang Disha — Project Status Report</title>
+  <style>
+    :root {
+      --ink: #1a1f2e;
+      --muted: #5a6478;
+      --line: #e2e6ef;
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --accent: #0d6e6e;
+      --accent-soft: #e6f4f4;
+      --ok: #0f7a4a;
+      --ok-bg: #e8f7ef;
+      --warn: #9a6700;
+      --warn-bg: #fff8e6;
+      --no: #b42318;
+      --no-bg: #fef3f2;
+      --partial: #175cd3;
+      --partial-bg: #eff8ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    header.hero {
+      background: linear-gradient(145deg, #0d4f4f 0%, #0d6e6e 55%, #148a8a 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 36px 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 28px rgba(13, 110, 110, 0.22);
+    }
+
+    header.hero h1 {
+      margin: 0 0 8px;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    header.hero .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      margin-top: 16px;
+      font-size: 0.92rem;
+      opacity: 0.95;
+    }
+
+    header.hero .meta span strong {
+      font-weight: 600;
+      opacity: 0.85;
+    }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 24px 26px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent-soft);
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 1.02rem;
+      color: var(--ink);
+    }
+
+    p { margin: 0 0 12px; color: var(--ink); }
+
+    .callout {
+      background: var(--accent-soft);
+      border-left: 4px solid var(--accent);
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      margin: 14px 0 0;
+    }
+
+    .callout.warning {
+      background: var(--warn-bg);
+      border-left-color: var(--warn);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 4px;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0f3f8;
+      font-weight: 600;
+      color: #334;
+      white-space: nowrap;
+    }
+
+    tr:nth-child(even) td { background: #fafbfd; }
+
+    ul, ol {
+      margin: 8px 0 4px;
+      padding-left: 1.35rem;
+    }
+
+    li { margin-bottom: 6px; }
+
+    code {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.86em;
+      background: #eef1f6;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: #1a1f2e;
+      color: #e8ecf4;
+      padding: 16px 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.84rem;
+      line-height: 1.45;
+      margin: 12px 0;
+    }
+
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .badge-ok { background: var(--ok-bg); color: var(--ok); }
+    .badge-warn { background: var(--warn-bg); color: var(--warn); }
+    .badge-no { background: var(--no-bg); color: var(--no); }
+    .badge-partial { background: var(--partial-bg); color: var(--partial); }
+    .badge-ui { background: #f4ebff; color: #6941c6; }
+
+    .phase {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    .phase strong { color: var(--accent); }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 8px;
+      padding: 16px;
+    }
+
+    @media print {
+      body { background: #fff; font-size: 12pt; }
+      .wrap { max-width: none; padding: 0; }
+      header.hero {
+        box-shadow: none;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      section {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header.hero { padding: 24px 20px; }
+      header.hero h1 { font-size: 1.35rem; }
+      section { padding: 18px 16px; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>Divyaang Disha — Project Status Report</h1>
+      <div class="meta">
+        <span><strong>For:</strong> Client review</span>
+        <span><strong>Date:</strong> 26 August 2026</span>
+        <span><strong>Products:</strong> Admin web app · Mobile app · Backend API</span>
+      </div>
+    </header>
+
+    <!-- 1. Summary -->
+    <section id="summary">
+      <h2>1. Summary</h2>
+      <p>
+        Divyaang Disha is a platform to help people with disabilities find services,
+        buy or sell items, and contact providers. The project has three parts:
+      </p>
+      <table>
+        <thead>
+          <tr><th>Part</th><th>Purpose</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Admin web app</strong></td>
+            <td>Staff manage listings, users, content, and enquiries</td>
+            <td><span class="badge badge-ok">Mostly working</span> — tied to live API</td>
+          </tr>
+          <tr>
+            <td><strong>Backend API</strong></td>
+            <td>Stores all data and powers the admin</td>
+            <td><span class="badge badge-ok">Built</span> — needs stable database in dev</td>
+          </tr>
+          <tr>
+            <td><strong>Mobile app</strong></td>
+            <td>End users browse, post, and enquire on phone</td>
+            <td><span class="badge badge-warn">UI built</span> — still uses demo data, not live API</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="callout">
+        <strong>In plain terms:</strong> the admin side is close to usable for staff.
+        The mobile app looks and flows well, but it does not yet save to the same database as admin.
+      </p>
+    </section>
+
+    <!-- 2. Admin -->
+    <section id="admin">
+      <h2>2. Admin web app — what works today</h2>
+      <p>
+        The admin app is a browser-based dashboard for staff. When the backend and database
+        are running, these areas work end to end (create, view, edit, delete).
+      </p>
+
+      <h3>Login and security</h3>
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Login / logout</td><td><span class="badge badge-ok">Working</span></td><td>Email + password</td></tr>
+          <tr><td>Forgot / reset password</td><td><span class="badge badge-ok">Working</span></td><td>Reset token shown in dev; email send not live yet</td></tr>
+          <tr><td>Role-based access</td><td><span class="badge badge-ok">Working</span></td><td>Menu shows only what each role may use</td></tr>
+          <tr><td>Protected pages</td><td><span class="badge badge-ok">Working</span></td><td>Must log in to open dashboard</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Who can log in to admin</h3>
+      <table>
+        <thead><tr><th>Role</th><th>Can log in?</th><th>What they can do</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Main admin</strong></td><td><span class="badge badge-ok">Yes</span></td><td>Full access to all modules</td></tr>
+          <tr><td><strong>State admin</strong></td><td><span class="badge badge-ok">Yes</span></td><td>Manage data for their state (providers scoped by state)</td></tr>
+          <tr><td><strong>Service provider admin</strong></td><td><span class="badge badge-ok">Yes</span></td><td>View and edit only providers assigned to them</td></tr>
+          <tr><td><strong>Volunteer</strong></td><td><span class="badge badge-ok">Yes</span></td><td>Volunteer directory + enquiries</td></tr>
+          <tr><td><strong>App user</strong></td><td><span class="badge badge-no">No</span></td><td>Uses mobile app only (not admin)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Dashboard</h3>
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>User counts (total / active / inactive)</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Service provider counts</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Listing and enquiry counts</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Last 7 days activity</td><td><span class="badge badge-ok">Working</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Service providers</h3>
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Categories</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Subcategories</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Keywords</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Provider listings (create, edit, delete)</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Approve / reject workflow</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Search (name, city, keyword, nearby radius)</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Assign provider admin to a listing</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Provider admin accounts page</td><td><span class="badge badge-ok">Working</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Users and staff accounts</h3>
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>App users (end users)</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>State admins (create, edit, deactivate)</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Provider admin accounts</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Volunteer login accounts</td><td><span class="badge badge-ok">Working</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Enquiries</h3>
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>User enquiries list</td><td><span class="badge badge-ok">Working</span></td><td>View, add, edit, delete</td></tr>
+          <tr><td>Service provider enquiries list</td><td><span class="badge badge-ok">Working</span></td><td>Separate tab by type</td></tr>
+          <tr><td>Status workflow (New / Contacted / Closed)</td><td><span class="badge badge-no">Not yet</span></td><td>Planned</td></tr>
+          <tr><td>Filter enquiries by role (state / provider)</td><td><span class="badge badge-no">Not yet</span></td><td>All roles with access see all enquiries today</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Marketplace</h3>
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Product listings</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Buyers</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Sellers</td><td><span class="badge badge-ok">Working</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Content management</h3>
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>FAQ</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Useful links</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Help &amp; support tickets</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Static pages (About, Terms, Privacy)</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Blogs</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Job alerts</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Suggestions</td><td><span class="badge badge-ok">Working</span></td></tr>
+          <tr><td>Volunteer directory (contact records)</td><td><span class="badge badge-ok">Working</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Admin — not working or incomplete</h3>
+      <table>
+        <thead><tr><th>Item</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>States page in sidebar</td><td>API exists; menu link not wired yet</td></tr>
+          <tr><td>Image upload (photos)</td><td>URL paste only; no file upload</td></tr>
+          <tr><td>Password reset email</td><td>Token works; email not sent automatically</td></tr>
+          <tr><td>Sample/demo routes (<code>/sample</code>, <code>/sample2</code>)</td><td>Dev-only; not part of product</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 3. Mobile -->
+    <section id="mobile">
+      <h2>3. Mobile app — what works today</h2>
+      <p>
+        The mobile app (Divyaang Disha) is built with Expo for Android and iOS.
+        Most screens are designed and clickable.
+      </p>
+      <p class="callout warning">
+        <strong>Important:</strong> almost all data is <strong>demo / sample data</strong>
+        stored in the app for testing. It does <strong>not</strong> connect to the live backend yet.
+      </p>
+
+      <h3>What works well (UI and flow)</h3>
+      <table>
+        <thead><tr><th>Area</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Welcome, login, register screens</td><td><span class="badge badge-ui">UI works</span></td><td>Login goes to OTP screen; <strong>no real account is created</strong></td></tr>
+          <tr><td>OTP verification</td><td><span class="badge badge-ui">UI works</span></td><td>Any 4-digit code passes; <strong>not sent by email/SMS</strong></td></tr>
+          <tr><td>Home tab</td><td><span class="badge badge-ui">UI works</span></td><td>Categories, banners, search — <strong>demo data</strong></td></tr>
+          <tr><td>Providers tab</td><td><span class="badge badge-ui">UI works</span></td><td>Browse by category — <strong>demo data</strong></td></tr>
+          <tr><td>Sale tab</td><td><span class="badge badge-ui">UI works</span></td><td>Product grid and detail — <strong>demo data</strong></td></tr>
+          <tr><td>Menu tab</td><td><span class="badge badge-ui">UI works</span></td><td>Profile, settings, links — mix of local + demo</td></tr>
+          <tr><td>Browse category → providers</td><td><span class="badge badge-ui">UI works</span></td><td>Demo listings</td></tr>
+          <tr><td>Provider detail page</td><td><span class="badge badge-ui">UI works</span></td><td>Info, reviews, enquiry form — <strong>demo</strong></td></tr>
+          <tr><td>Product detail page</td><td><span class="badge badge-ui">UI works</span></td><td>Sale item detail and enquiry — <strong>demo</strong></td></tr>
+          <tr><td>Add service provider post</td><td><span class="badge badge-ui">UI works</span></td><td>Saves in app memory only; <strong>lost on reload</strong></td></tr>
+          <tr><td>Add sale item</td><td><span class="badge badge-ui">UI works</span></td><td>Same — <strong>not saved to server</strong></td></tr>
+          <tr><td>My posts / my products</td><td><span class="badge badge-ui">UI works</span></td><td>Shows demo or session data</td></tr>
+          <tr><td>My enquiries</td><td><span class="badge badge-ui">UI works</span></td><td>Saved on device only</td></tr>
+          <tr><td>Edit profile</td><td><span class="badge badge-ui">UI works</span></td><td>Saved on device only</td></tr>
+          <tr><td>FAQ, blogs, links, about, contact</td><td><span class="badge badge-ui">UI works</span></td><td><strong>Demo content</strong></td></tr>
+          <tr><td>Help &amp; support form</td><td><span class="badge badge-ui">UI works</span></td><td><strong>Demo submit</strong></td></tr>
+          <tr><td>Ask a question</td><td><span class="badge badge-ui">UI works</span></td><td><strong>Demo submit</strong></td></tr>
+          <tr><td>Language picker</td><td><span class="badge badge-ui">UI works</span></td><td>Saves choice; <strong>UI text does not translate</strong></td></tr>
+          <tr><td>Maps / location picker</td><td><span class="badge badge-ui">UI works</span></td><td><strong>Sample places</strong>, not live Google search</td></tr>
+          <tr><td>Get Featured / Sponsorship</td><td><span class="badge badge-ui">UI works</span></td><td><strong>Fake payment</strong> (alert only, no Razorpay)</td></tr>
+          <tr><td>Chat screen</td><td><span class="badge badge-ui">UI only</span></td><td><strong>Hardcoded sample messages</strong> — not real chat</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Mobile — not connected to backend yet</h3>
+      <table>
+        <thead><tr><th>Feature</th><th>Backend ready?</th><th>Mobile connected?</th></tr></thead>
+        <tbody>
+          <tr><td>Real login / register</td><td><span class="badge badge-partial">Partial</span></td><td><span class="badge badge-no">No</span></td></tr>
+          <tr><td>Browse approved providers from admin</td><td><span class="badge badge-ok">Yes</span> (public search API)</td><td><span class="badge badge-no">No</span></td></tr>
+          <tr><td>Categories from admin</td><td>Admin-only API</td><td><span class="badge badge-no">No</span></td></tr>
+          <tr><td>Submit enquiry to admin</td><td>Admin API exists</td><td><span class="badge badge-no">No</span></td></tr>
+          <tr><td>Sale / marketplace from admin</td><td>Admin API exists</td><td><span class="badge badge-no">No</span></td></tr>
+          <tr><td>FAQ / blogs / pages from admin</td><td>Admin API exists</td><td><span class="badge badge-no">No</span></td></tr>
+          <tr><td>Real OTP</td><td><span class="badge badge-no">No</span></td><td><span class="badge badge-no">No</span></td></tr>
+          <tr><td>Real payments</td><td><span class="badge badge-no">No</span></td><td><span class="badge badge-no">No</span></td></tr>
+          <tr><td>Push notifications</td><td><span class="badge badge-no">No</span></td><td><span class="badge badge-no">No</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4. Backend -->
+    <section id="backend">
+      <h2>4. Backend API — what exists</h2>
+      <p>
+        The backend (NestJS + PostgreSQL) powers the admin app.
+        It is <strong>not</strong> fully wired to the mobile app yet.
+      </p>
+
+      <h3>Working for admin</h3>
+      <ul>
+        <li>Authentication (login, refresh, logout, password reset token)</li>
+        <li>Users, roles, and permissions</li>
+        <li>States, categories, subcategories, keywords</li>
+        <li>Service providers (including public search for future mobile use)</li>
+        <li>Enquiries, marketplace, CMS content</li>
+        <li>Dashboard statistics</li>
+        <li>Volunteer accounts and provider admin assignment</li>
+      </ul>
+
+      <h3>Ready for mobile (built but not used by app yet)</h3>
+      <ul>
+        <li><code>GET /api/v1/service-providers/search</code> — public provider search</li>
+        <li><code>GET /api/v1/service-providers/search/:id</code> — public provider detail</li>
+        <li><code>POST /api/v1/auth/register</code> — end user registration</li>
+      </ul>
+
+      <h3>Not built yet</h3>
+      <ul>
+        <li>OTP / SMS auth</li>
+        <li>File / image upload</li>
+        <li>Reviews, chat, banners</li>
+        <li>Payment (Razorpay)</li>
+        <li>Public read APIs for FAQ, blogs, categories (mobile needs these)</li>
+      </ul>
+    </section>
+
+    <!-- 5. Connection -->
+    <section id="connection">
+      <h2>5. How admin and mobile connect today</h2>
+      <pre><code>                    TODAY
+                    -----
+
+   Admin web app  --------->  Backend API  --------->  Database
+        (live)                  (live)
+
+   Mobile app    - - - - - >  (not connected)
+        (demo data only)</code></pre>
+
+      <p><strong>After mobile integration (planned):</strong></p>
+      <pre><code>   Admin web app  --------->  Backend API  &lt;---------  Mobile app
+                                    |
+                               Database</code></pre>
+      <p>
+        Staff actions in admin (approve a provider, add FAQ) will then appear in the mobile app
+        once it reads from the same API.
+      </p>
+    </section>
+
+    <!-- 6. Completion -->
+    <section id="completion">
+      <h2>6. Overall completion (estimate)</h2>
+      <table>
+        <thead>
+          <tr><th>Product</th><th>UI / screens</th><th>Live data / API</th><th>Client-ready?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Admin web app</strong></td>
+            <td>~90%</td>
+            <td>~85%</td>
+            <td><span class="badge badge-ok">Near ready</span> — after DB stable + small fixes</td>
+          </tr>
+          <tr>
+            <td><strong>Backend API</strong></td>
+            <td>n/a</td>
+            <td>~85% for admin; ~25% for mobile</td>
+            <td><span class="badge badge-ok">Admin-ready</span></td>
+          </tr>
+          <tr>
+            <td><strong>Mobile app</strong></td>
+            <td>~90%</td>
+            <td>~5% (demo only)</td>
+            <td><span class="badge badge-warn">Demo / prototype</span> — not production</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. Next steps -->
+    <section id="next-steps">
+      <h2>7. Recommended next steps (for client alignment)</h2>
+
+      <div class="phase">
+        <p><strong>Phase 1 — Finish admin (short term)</strong></p>
+        <ol>
+          <li>Stable database connection in dev and staging</li>
+          <li>Wire States page in admin menu</li>
+          <li>Enquiry status (New / Contacted / Closed)</li>
+          <li>Limit enquiries by role (state / provider)</li>
+          <li>Password reset email and image upload (optional but useful)</li>
+        </ol>
+      </div>
+
+      <div class="phase">
+        <p><strong>Phase 2 — Connect mobile (medium term)</strong></p>
+        <ol>
+          <li>Point mobile app to backend instead of demo data</li>
+          <li>Real login and registration</li>
+          <li>Browse providers and categories from admin data</li>
+          <li>Submit enquiries that appear in admin</li>
+          <li>Marketplace and content pages from admin CMS</li>
+        </ol>
+      </div>
+
+      <div class="phase">
+        <p><strong>Phase 3 — Production extras (later)</strong></p>
+        <ol>
+          <li>OTP or SMS verification</li>
+          <li>Razorpay (Get Featured / Sponsorship)</li>
+          <li>Push notifications</li>
+          <li>Chat (if required)</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 8. Test login -->
+    <section id="test-login">
+      <h2>8. Default test login (development only)</h2>
+      <table>
+        <thead><tr><th>Role</th><th>Email (example)</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Main admin</td><td><code>admin@divyaangdisha.com</code></td><td>Created by database seed</td></tr>
+          <tr><td>State admin</td><td>Created in admin</td><td>Admin creates under State Admin</td></tr>
+          <tr><td>Provider admin</td><td>Created in admin</td><td>Then assigned to a provider listing</td></tr>
+          <tr><td>Volunteer</td><td>Created in admin</td><td>Under Volunteer accounts</td></tr>
+        </tbody>
+      </table>
+      <p class="callout warning">
+        <strong>Do not share production passwords in this document.</strong>
+        Use staging credentials only.
+      </p>
+    </section>
+
+    <!-- 9. Purpose -->
+    <section id="purpose">
+      <h2>9. Document purpose</h2>
+      <p>
+        This report describes <strong>what is working as of the date above</strong>, based on the
+        current codebase. It is meant for client review and planning. It does not promise
+        production deployment until Phase 1 (admin) and Phase 2 (mobile API) are complete
+        and tested in staging.
+      </p>
+      <p>
+        For internal implementation detail, see
+        <code>Admin_Flow_Completion_Plan.md</code> in the same folder.
+      </p>
+    </section>
+
+    <footer>
+      Prepared for Divyaang Disha · Admin panel project
+    </footer>
+  </div>
+</body>
+</html>

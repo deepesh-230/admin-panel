@@ -15,18 +15,18 @@ import {
   storeSession,
   type AuthUser,
 } from '../utils/apiClient';
+import { DASHBOARD_ROLES, homePathForRole } from '../utils/roleAccess';
 
+export { homePathForRole };
 type AuthContextValue = {
   user: AuthUser | null;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<string>;
   logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-const DASHBOARD_ROLES = new Set(['ADMIN', 'STATE_ADMIN']);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(getStoredUser());
@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       expiresIn: result.expiresIn,
     });
     setUser(result.user);
+    return homePathForRole(result.user.role);
   }, []);
 
   const logout = useCallback(async () => {
