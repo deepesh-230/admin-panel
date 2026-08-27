@@ -1,3 +1,5 @@
+export type EnquiryStatus = 'NEW' | 'CONTACTED' | 'CLOSED';
+
 export interface Enquiry {
   id: string;
   sNo: number;
@@ -9,6 +11,11 @@ export interface Enquiry {
   email: string;
   date: string;
   createdBy: string;
+  status?: EnquiryStatus;
+  providerId?: string | null;
+  stateId?: string | null;
+  provider?: { id: string; name: string; stateId?: string } | null;
+  state?: { id: string; name: string; code: string | null } | null;
 }
 
 export interface Listing {

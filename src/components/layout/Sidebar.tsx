@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   BriefcaseMedical,
@@ -19,7 +19,9 @@ import {
   ChevronDown,
   PanelLeftClose,
   PanelLeftOpen,
+  MapPin,
   UserCog,
+  X,
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useSidebar } from '../../contexts/SidebarContext';
@@ -28,77 +30,72 @@ import { canAccess } from '../../utils/roleAccess';
 
 interface NavItem {
   title: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   href?: string;
   permission?: string;
   children?: NavItem[];
   isExpanded?: boolean;
 }
 
-const BulletIcon = () => (
-  <span className="w-5 h-5 flex items-center justify-center">
-    <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
-  </span>
-);
-
 const ALL_NAV_ITEMS: NavItem[] = [
-  { title: 'Dashboard', icon: <LayoutDashboard size={20} />, href: '/dashboard', permission: 'dashboard.read' },
+  { title: 'Dashboard', icon: <LayoutDashboard size={18} />, href: '/dashboard', permission: 'dashboard.read' },
+  { title: 'States', icon: <MapPin size={18} />, href: '/states', permission: 'states.read' },
   {
     title: 'Service Provider',
-    icon: <BriefcaseMedical size={20} />,
+    icon: <BriefcaseMedical size={18} />,
     permission: 'providers.read',
     children: [
-      { title: 'Category', icon: <BulletIcon />, href: '/service-provider/category', permission: 'categories.read' },
-      { title: 'Sub Category', icon: <BulletIcon />, href: '/service-provider/sub-category', permission: 'categories.read' },
-      { title: 'Listing', icon: <BulletIcon />, href: '/service-provider/listing', permission: 'providers.read' },
-      { title: 'Provider admins', icon: <BulletIcon />, href: '/provider-admins', permission: 'users.read' },
+      { title: 'Category', href: '/service-provider/category', permission: 'categories.read' },
+      { title: 'Sub Category', href: '/service-provider/sub-category', permission: 'categories.read' },
+      { title: 'Listing', href: '/service-provider/listing', permission: 'providers.read' },
+      { title: 'Provider admins', href: '/provider-admins', permission: 'users.read' },
     ],
   },
   {
     title: 'App user',
-    icon: <User size={20} />,
+    icon: <User size={18} />,
     permission: 'users.read',
-    children: [{ title: 'Listing', icon: <BulletIcon />, href: '/app-users', permission: 'users.read' }],
+    children: [{ title: 'Listing', href: '/app-users', permission: 'users.read' }],
   },
   {
     title: 'State Admin',
-    icon: <Shield size={20} />,
+    icon: <Shield size={18} />,
     permission: 'state_admins.read',
-    children: [{ title: 'Listing', icon: <BulletIcon />, href: '/state-admins', permission: 'state_admins.read' }],
+    children: [{ title: 'Listing', href: '/state-admins', permission: 'state_admins.read' }],
   },
   {
     title: 'Volunteer accounts',
-    icon: <UserCog size={20} />,
+    icon: <UserCog size={18} />,
     permission: 'users.read',
-    children: [{ title: 'Login accounts', icon: <BulletIcon />, href: '/volunteer-admins', permission: 'users.read' }],
+    children: [{ title: 'Login accounts', href: '/volunteer-admins', permission: 'users.read' }],
   },
   {
     title: 'Enquiry',
-    icon: <MessageSquareWarning size={20} />,
+    icon: <MessageSquareWarning size={18} />,
     permission: 'enquiries.read',
     children: [
-      { title: 'User enquiry', icon: <BulletIcon />, href: '/enquiries/user', permission: 'enquiries.read' },
-      { title: 'Service provider', icon: <BulletIcon />, href: '/enquiries/provider', permission: 'enquiries.read' },
+      { title: 'User enquiry', href: '/enquiries/user', permission: 'enquiries.read' },
+      { title: 'Service provider', href: '/enquiries/provider', permission: 'enquiries.read' },
     ],
   },
   {
     title: 'Market Place',
-    icon: <Store size={20} />,
+    icon: <Store size={18} />,
     permission: 'marketplace.read',
     children: [
-      { title: 'Product listing', icon: <BulletIcon />, href: '/marketplace/products', permission: 'marketplace.read' },
-      { title: 'Buyer', icon: <BulletIcon />, href: '/marketplace/buyers', permission: 'marketplace.read' },
-      { title: 'Seller', icon: <BulletIcon />, href: '/marketplace/sellers', permission: 'marketplace.read' },
+      { title: 'Product listing', href: '/marketplace/products', permission: 'marketplace.read' },
+      { title: 'Buyer', href: '/marketplace/buyers', permission: 'marketplace.read' },
+      { title: 'Seller', href: '/marketplace/sellers', permission: 'marketplace.read' },
     ],
   },
-  { title: 'Volunteer directory', icon: <HeartHandshake size={20} />, href: '/volunteers', permission: 'volunteers.read' },
-  { title: 'FAQ', icon: <HelpCircle size={20} />, href: '/faq', permission: 'cms.read' },
-  { title: 'Useful link', icon: <LinkIcon size={20} />, href: '/useful-links', permission: 'cms.read' },
-  { title: 'Help & support', icon: <LifeBuoy size={20} />, href: '/support', permission: 'cms.read' },
-  { title: 'Pages', icon: <FileText size={20} />, href: '/pages', permission: 'cms.read' },
-  { title: 'Blogs', icon: <Newspaper size={20} />, href: '/blogs', permission: 'cms.read' },
-  { title: 'Job alerts', icon: <Briefcase size={20} />, href: '/jobs', permission: 'cms.read' },
-  { title: 'Suggestions', icon: <Lightbulb size={20} />, href: '/suggestions', permission: 'cms.read' },
+  { title: 'Volunteer directory', icon: <HeartHandshake size={18} />, href: '/volunteers', permission: 'volunteers.read' },
+  { title: 'FAQ', icon: <HelpCircle size={18} />, href: '/faq', permission: 'cms.read' },
+  { title: 'Useful link', icon: <LinkIcon size={18} />, href: '/useful-links', permission: 'cms.read' },
+  { title: 'Help & support', icon: <LifeBuoy size={18} />, href: '/support', permission: 'cms.read' },
+  { title: 'Pages', icon: <FileText size={18} />, href: '/pages', permission: 'cms.read' },
+  { title: 'Blogs', icon: <Newspaper size={18} />, href: '/blogs', permission: 'cms.read' },
+  { title: 'Job alerts', icon: <Briefcase size={18} />, href: '/jobs', permission: 'cms.read' },
+  { title: 'Suggestions', icon: <Lightbulb size={18} />, href: '/suggestions', permission: 'cms.read' },
 ];
 
 function filterNavItems(items: NavItem[], permissions: string[]): NavItem[] {
@@ -114,6 +111,11 @@ function filterNavItems(items: NavItem[], permissions: string[]): NavItem[] {
     })
     .filter(Boolean) as NavItem[];
 }
+
+const itemBase =
+  'relative w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-[14px] font-medium transition-colors';
+const itemIdle = 'text-gray-600 hover:bg-gray-50 hover:text-gray-900';
+const itemActive = 'bg-sidebar-active text-primary font-semibold';
 
 export const Sidebar = () => {
   const { isCollapsed, toggleSidebar, isMobileMenuOpen, setIsMobileMenuOpen } = useSidebar();
@@ -138,31 +140,65 @@ export const Sidebar = () => {
           isCollapsed ? 'md:translate-x-0 md:w-20' : 'md:translate-x-0 md:w-64',
         )}
       >
-        <div className="h-16 flex items-center px-4 border-b border-border-light flex-shrink-0 justify-between bg-white">
+        {/* Brand header — Sample2 style */}
+        <div className="h-16 flex items-center px-4 border-b border-border-light flex-shrink-0 justify-between">
           <div
             className={cn(
-              'flex items-center gap-2 overflow-hidden',
+              'flex items-center gap-2.5 overflow-hidden',
               isCollapsed ? 'md:w-0 md:opacity-0 md:hidden' : 'w-auto opacity-100',
             )}
           >
-            <div className="w-8 h-8 rounded-full border border-blue-200 flex flex-shrink-0 items-center justify-center bg-white shadow-sm overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-blue-100 to-red-100 rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-              </div>
+            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm shrink-0">
+              DD
             </div>
+            <span className="text-[17px] font-bold text-primary tracking-tight whitespace-nowrap">
+              Divyaang Disha
+            </span>
           </div>
           <button
             onClick={toggleSidebar}
-            className={`hidden md:block p-1.5 rounded-md hover:bg-gray-100 text-gray-600 transition-colors ${isCollapsed ? 'mx-auto' : ''}`}
+            className={cn(
+              'hidden md:block p-1.5 rounded-md hover:bg-gray-100 text-gray-500 transition-colors',
+              isCollapsed && 'mx-auto',
+            )}
             title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           >
             {isCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
           </button>
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="md:hidden p-1.5 rounded-md hover:bg-gray-100 text-gray-500"
+          >
+            <X size={18} />
+          </button>
         </div>
-        <div className="py-4 flex-1 overflow-y-auto overflow-x-hidden">
+
+        {/* User chip — Sample2 style */}
+        {/* {!isCollapsed && (
+          <div className="px-4 py-3 border-b border-border-light">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-sidebar-active border border-border-light flex items-center justify-center text-primary font-semibold text-sm shrink-0">
+                {(user?.name || user?.email || 'A').charAt(0).toUpperCase()}
+              </div>
+              <div className="leading-tight min-w-0">
+                <p className="text-sm font-semibold text-gray-800 truncate">
+                  {user?.name || 'Administrator'}
+                </p>
+                <p className="text-xs text-gray-400 truncate">{user?.email || user?.role || 'admin'}</p>
+              </div>
+            </div>
+          </div>
+        )} */}
+
+        <div className="py-3 flex-1 overflow-y-auto overflow-x-hidden">
           <nav className="space-y-0.5 px-3">
-            {navItems.map((item, index) => (
-              <SidebarItem key={index} item={item} isCollapsed={isCollapsed} />
+            {navItems.map((item) => (
+              <SidebarItem
+                key={item.title}
+                item={item}
+                isCollapsed={isCollapsed}
+                onNavigate={() => setIsMobileMenuOpen(false)}
+              />
             ))}
           </nav>
         </div>
@@ -171,47 +207,78 @@ export const Sidebar = () => {
   );
 };
 
-const SidebarItem = ({ item, isCollapsed }: { item: NavItem; isCollapsed: boolean }) => {
-  const hasChildren = item.children && item.children.length > 0;
-  const [isExpanded, setIsExpanded] = useState(item.isExpanded || false);
+const SidebarItem = ({
+  item,
+  isCollapsed,
+  onNavigate,
+}: {
+  item: NavItem;
+  isCollapsed: boolean;
+  onNavigate: () => void;
+}) => {
+  const { pathname } = useLocation();
+  const hasChildren = Boolean(item.children?.length);
+  const childActive =
+    item.children?.some((c) => c.href && (pathname === c.href || pathname.startsWith(c.href + '/'))) ??
+    false;
+  const [isExpanded, setIsExpanded] = useState(item.isExpanded || childActive);
 
   if (hasChildren) {
     return (
       <div>
-        <div
+        <button
+          type="button"
           onClick={() => {
-            if (!isCollapsed) setIsExpanded(!isExpanded);
+            if (!isCollapsed) setIsExpanded((v) => !v);
           }}
           className={cn(
-            'flex items-center justify-between px-3 py-2.5 rounded-md cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors',
-            isExpanded && !isCollapsed && 'text-gray-900 bg-gray-50',
+            itemBase,
+            'justify-between',
+            childActive ? itemActive : itemIdle,
             isCollapsed && 'justify-center px-0',
           )}
           title={isCollapsed ? item.title : undefined}
         >
-          <div className="flex items-center gap-3">
-            {item.icon}
-            {!isCollapsed && <span className="font-medium text-[15px]">{item.title}</span>}
-          </div>
-          {!isCollapsed && (isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />)}
-        </div>
+          {childActive && !isCollapsed && (
+            <span className="absolute left-0 top-1 bottom-1 w-[3px] rounded-r-full bg-primary" />
+          )}
+          <span className={cn('flex items-center gap-3', isCollapsed && 'justify-center w-full')}>
+            <span className={childActive ? 'text-primary' : 'text-gray-400'}>{item.icon}</span>
+            {!isCollapsed && <span>{item.title}</span>}
+          </span>
+          {!isCollapsed &&
+            (isExpanded ? (
+              <ChevronDown size={15} className="text-gray-400 shrink-0" />
+            ) : (
+              <ChevronRight size={15} className="text-gray-400 shrink-0" />
+            ))}
+        </button>
+
         {isExpanded && !isCollapsed && (
-          <div className="mt-1 space-y-0.5">
-            {item.children?.map((child, idx) => (
+          <div className="mt-0.5 ml-4 space-y-0.5 border-l border-gray-200 pl-3">
+            {item.children?.map((child) => (
               <NavLink
-                key={idx}
+                key={child.title}
                 to={child.href || '#'}
+                end
+                onClick={onNavigate}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
+                    'relative flex items-center gap-3 px-3 py-2 rounded-md text-[13.5px] transition-colors',
                     isActive
-                      ? 'bg-sidebar-active text-primary font-medium border-l-4 border-primary rounded-l-none -ml-[12px] pl-[calc(32px+0.75rem)]'
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50 ml-6',
+                      ? 'bg-sidebar-active text-primary font-semibold'
+                      : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50',
                   )
                 }
               >
-                {child.icon}
-                <span className="text-[14.5px]">{child.title}</span>
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <span className="absolute left-0 top-1 bottom-1 w-[3px] rounded-r-full bg-primary" />
+                    )}
+                    <span>{child.title}</span>
+                  </>
+                )}
               </NavLink>
             ))}
           </div>
@@ -223,22 +290,28 @@ const SidebarItem = ({ item, isCollapsed }: { item: NavItem; isCollapsed: boolea
   return (
     <NavLink
       to={item.href || '#'}
+      end
+      onClick={onNavigate}
       className={({ isActive }) =>
         cn(
-          'flex items-center justify-between px-3 py-2.5 rounded-md transition-colors',
-          isActive
-            ? 'bg-sidebar-active text-primary font-medium border-l-4 border-primary rounded-l-none -ml-[12px] pl-[calc(12px+0.75rem)]'
-            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-          isCollapsed && 'justify-center px-0 rounded-l-md ml-0 pl-0 border-l-0',
+          itemBase,
+          isActive ? itemActive : itemIdle,
+          isCollapsed && 'justify-center px-0',
         )
       }
-      style={isCollapsed ? { paddingLeft: 0, marginLeft: 0 } : {}}
       title={isCollapsed ? item.title : undefined}
     >
-      <div className={cn('flex items-center gap-3', isCollapsed && 'justify-center w-full')}>
-        {item.icon}
-        {!isCollapsed && <span className="font-medium text-[15px]">{item.title}</span>}
-      </div>
+      {({ isActive }) => (
+        <>
+          {isActive && !isCollapsed && (
+            <span className="absolute left-0 top-1 bottom-1 w-[3px] rounded-r-full bg-primary" />
+          )}
+          <span className={cn('flex items-center gap-3', isCollapsed && 'justify-center w-full')}>
+            <span className={isActive ? 'text-primary' : 'text-gray-400'}>{item.icon}</span>
+            {!isCollapsed && <span>{item.title}</span>}
+          </span>
+        </>
+      )}
     </NavLink>
   );
 };

@@ -5,8 +5,12 @@ import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
 import { statesApi, type State } from '../api/masterData';
+import { useAuth } from '../contexts/AuthContext';
+import { canAccess } from '../utils/roleAccess';
 
 export const StatesList = () => {
+  const { user } = useAuth();
+  const canWrite = canAccess(user?.permissions, 'states.write');
   const [items, setItems] = useState<State[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -114,9 +118,11 @@ export const StatesList = () => {
               className="h-10 w-64 pl-9 pr-3 rounded-md border border-gray-300 text-sm"
             />
           </div>
-          <Button onClick={openCreate} icon={<Plus size={16} />}>
-            Add State
-          </Button>
+          {canWrite && (
+            <Button onClick={openCreate} icon={<Plus size={16} />}>
+              Add State
+            </Button>
+          )}
         </div>
 
         {loading ? (
@@ -147,14 +153,18 @@ export const StatesList = () => {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => openEdit(item)} className="p-1.5 text-primary hover:bg-primary/10 rounded">
-                          <Pencil size={15} />
-                        </button>
-                        <button onClick={() => handleDelete(item)} className="p-1.5 text-red-500 hover:bg-red-50 rounded">
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
+                      {canWrite ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <button onClick={() => openEdit(item)} className="p-1.5 text-primary hover:bg-primary/10 rounded">
+                            <Pencil size={15} />
+                          </button>
+                          <button onClick={() => handleDelete(item)} className="p-1.5 text-red-500 hover:bg-red-50 rounded">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="block text-center text-gray-400">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}

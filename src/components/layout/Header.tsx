@@ -21,17 +21,19 @@ export const Header = () => {
         <Menu size={24} />
       </button>
 
+      <div className="md:hidden font-semibold text-primary tracking-tight">Divyaang Disha</div>
+
       <div className="flex items-center gap-3">
-        <div className="text-right">
+        <div className="text-right hidden sm:block">
           <p className="text-sm font-semibold text-gray-800 leading-tight">
             {user?.name || 'Administrator'}
           </p>
-          <p className="text-xs text-gray-500">{user?.role || 'admin'}</p>
+          <p className="text-xs text-gray-400">{user?.role || 'admin'}</p>
         </div>
-        <div className="w-10 h-10 rounded-full border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
-          <div className="w-full h-full bg-gradient-to-br from-green-100 to-red-100 flex items-center justify-center text-sm font-semibold text-gray-700">
+        <div className="w-10 h-10 rounded-full border border-border-light overflow-hidden bg-sidebar-active flex items-center justify-center">
+          <span className="text-sm font-semibold text-primary">
             {(user?.name || user?.email || 'A').charAt(0).toUpperCase()}
-          </div>
+          </span>
         </div>
         <button
           onClick={() => logout()}

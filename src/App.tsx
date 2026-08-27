@@ -7,6 +7,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login';
 import { ForgotPassword } from './pages/ForgotPassword';
 import { ResetPassword } from './pages/ResetPassword';
+import { StatesList } from './pages/StatesList';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { CategoriesList } from './pages/CategoriesList';
 import { SubcategoriesList } from './pages/SubcategoriesList';
 import { StateAdminsList } from './pages/StateAdminsList';
@@ -62,6 +64,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/states" element={<StatesList />} />
                     <Route path="/service-provider/category" element={<CategoriesList />} />
                     <Route path="/service-provider/sub-category" element={<SubcategoriesList />} />
                     <Route path="/service-provider/listing" element={<ServiceProvidersList />} />
@@ -88,10 +91,7 @@ function App() {
                     <Route path="/blogs" element={<BlogsPage />} />
                     <Route path="/jobs" element={<JobAlertsPage />} />
                     <Route path="/suggestions" element={<SuggestionsPage />} />
-                    <Route
-                      path="*"
-                      element={<div className="p-4 text-gray-500">Page under construction</div>}
-                    />
+                    <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </Layout>
               </ProtectedRoute>

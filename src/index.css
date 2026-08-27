@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #8b5cf6;
-  --color-primary-hover: #7c3aed;
+  /* Divyaang Disha brand theme */
+  --color-primary: #0061A5;
+  --color-primary-hover: #004B80;
   --color-success: #22c55e;
   --color-success-hover: #16a34a;
   --color-secondary: #6b7280;
   --color-secondary-hover: #4b5563;
-  --color-sidebar-active: #f3e8ff;
-  --color-sidebar-active-border: #8b5cf6;
+  --color-sidebar-active: #e8f2f8;
+  --color-sidebar-active-border: #0061A5;
   --color-bg-light: #f3f4f6;
   --color-border-light: #e5e7eb;
 }

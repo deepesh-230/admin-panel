@@ -44,14 +44,14 @@ export const ListingTableToolbar = ({
           <option value="provider2">Provider 2</option>
         </select>
 
-        <Button variant="primary" className="h-10 bg-[#8b5cf6] hover:bg-[#7c3aed]" icon={<Search size={16} />}>
+        <Button variant="primary" className="h-10" icon={<Search size={16} />}>
           Filter
         </Button>
       </div>
       
       <div className="flex items-center">
         {onAdd && (
-          <Button onClick={onAdd} variant="primary" className="h-10 bg-[#8b5cf6] hover:bg-[#7c3aed]" icon={<Plus size={18} />}>
+          <Button onClick={onAdd} variant="primary" className="h-10" icon={<Plus size={18} />}>
             Add Product
           </Button>
         )}

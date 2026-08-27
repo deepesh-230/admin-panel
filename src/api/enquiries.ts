@@ -1,11 +1,12 @@
 import { apiClient } from '../utils/apiClient';
-import type { Enquiry } from '../types';
+import type { Enquiry, EnquiryStatus } from '../types';
 
 export const enquiriesApi = {
-  getAll: (searchQuery?: string, kind?: string) => {
+  getAll: (searchQuery?: string, kind?: string, status?: EnquiryStatus | '') => {
     const params = new URLSearchParams();
     if (searchQuery) params.set('search', searchQuery);
     if (kind) params.set('kind', kind);
+    if (status) params.set('status', status);
     const query = params.toString() ? `?${params.toString()}` : '';
     return apiClient.get<Enquiry[]>(`/api/v1/enquiries${query}`);
   },

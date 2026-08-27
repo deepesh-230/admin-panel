@@ -31,15 +31,15 @@ Staff can log in, manage master data, approve providers, handle enquiries, and m
 | **Volunteer login accounts UI** | **Done** — `/volunteer-admins` |
 | **Permission-based sidebar** | **Done** — menu hides by `user.permissions` |
 | **Role-based login redirect** | **Done** — each role lands on its home page |
-| Local DB connection | **Broken right now** |
-| States page in sidebar/routes | **Missing wire-up** |
+| Local DB connection | **Fixed** — local Postgres `admin_panel` |
+| States page in sidebar/routes | **Done** |
 | Email for password reset | **Missing** |
 | Image upload | **Missing** |
-| Enquiry status workflow | **Thin** |
-| Enquiry scoping by role | **Missing** — all enquiry roles see every enquiry |
-| Category Home vs Providers type | **Missing** |
+| Enquiry status workflow | **Done** — NEW / CONTACTED / CLOSED |
+| Enquiry scoping by role | **Done** — admin / state / provider / volunteer |
+| Category Home vs Providers type | **Done** — `CARE` / `SERVICE` |
 
-**Bottom line:** Core admin APIs and multi-role login exist. Finish DB, states UI, enquiry rules, then harden and freeze before mobile work.
+**Bottom line:** Phases A–C core tickets done. Next: Phase D (email + upload), then Phase E harden / QA.
 
 ---
 
@@ -48,9 +48,9 @@ Staff can log in, manage master data, approve providers, handle enquiries, and m
 | Role | Admin login? | Home page | Enquiries | Main access |
 |------|--------------|-----------|-----------|-------------|
 | **ADMIN** | Yes | Dashboard | Full — all kinds, all states | Everything |
-| **STATE_ADMIN** | Yes | Dashboard | Full — all kinds today (not state-scoped yet) | Almost all; cannot create state admins |
-| **SERVICE_PROVIDER_ADMIN** | Yes | Service Provider → Listing | Read + write — all enquiries today (not provider-scoped yet) | Only assigned providers; edit only |
-| **VOLUNTEER** | Yes | Volunteer directory | Read + write — all enquiries today | Volunteer directory + enquiries |
+| **STATE_ADMIN** | Yes | Dashboard | Scoped to their `stateId` | Almost all; cannot create state admins / states |
+| **SERVICE_PROVIDER_ADMIN** | Yes | Service Provider → Listing | Only enquiries for assigned provider(s) | Only assigned providers; edit only |
+| **VOLUNTEER** | Yes | Volunteer directory | User enquiries only (`kind=USER`) | Volunteer directory + user enquiries |
 | **END_USER** | No | — | — | Mobile app only |
 
 ### Permission model (how it works)
@@ -130,14 +130,14 @@ Nothing else matters if login cannot talk to Postgres.
 
 | Check | Pass |
 |-------|------|
-| `GET /api/v1/health` returns OK | ☐ |
-| Admin login works | ☐ |
-| Dashboard shows numbers (not forever loading) | ☐ |
-| Categories list loads | ☐ |
-| Service providers list loads | ☐ |
-| Provider admin login works (after assign) | ☐ |
-| Volunteer login works (after account created) | ☐ |
-| Logout works | ☐ |
+| `GET /api/v1/health` returns OK | ☑ |
+| Admin login works | ☑ |
+| Dashboard shows numbers (not forever loading) | ☑ |
+| Categories list loads | ☑ |
+| Service providers list loads | ☑ |
+| Provider admin login works (after assign) | ☐ (create + assign in UI, then verify) |
+| Volunteer login works (after account created) | ☐ (create account in UI, then verify) |
+| Logout works | ☑ |
 
 ### Done when
 
@@ -182,8 +182,8 @@ Staff can manage States from the sidebar. No dead “product” pages in the mai
 
 | Check | Pass |
 |-------|------|
-| Sidebar → States opens | ☐ |
-| Create state “Karnataka” | ☐ |
+| Sidebar → States opens | ☑ (wired) |
+| Create state “Karnataka” | ☑ (API smoke) |
 | Assign that state to a state admin | ☐ |
 | Provider create form shows the new state | ☐ |
 
@@ -409,12 +409,12 @@ Work these as tickets, top first:
 
 | # | Ticket | Phase | Size | Status |
 |---|--------|-------|------|--------|
-| 1 | Fix DB + smoke login | A | S | Open |
-| 2 | Wire States route + sidebar | B | S | Open |
-| 3 | Enquiry status field + UI tabs | C | M | Open |
-| 4 | **Enquiry scoping by role** | C | M | Open |
-| 5 | Category type field + admin form | C | M | Open |
-| 6 | Document / quarantine old listings | C | S | Open |
+| 1 | Fix DB + smoke login | A | S | **Done** (local Postgres) |
+| 2 | Wire States route + sidebar | B | S | **Done** |
+| 3 | Enquiry status field + UI tabs | C | M | **Done** |
+| 4 | **Enquiry scoping by role** | C | M | **Done** |
+| 5 | Category type field + admin form | C | M | **Done** |
+| 6 | Document / quarantine old listings | C | S | **Done** |
 | 7 | Password reset email | D | M | Open |
 | 8 | Upload API + provider cover picker | D | M | Open |
 | 9 | Lock state for STATE_ADMIN forms | E | S | Open |
@@ -490,9 +490,8 @@ Two people: split backend vs admin UI per ticket.
 
 ## 16. First action now
 
-1. Fix `DATABASE_URL` and get `GET /api/v1/health` + login green.
-2. Run `pnpm exec prisma migrate deploy` and `pnpm seed` (for `VOLUNTEER` role + permissions).
-3. Open a ticket: **Wire States in sidebar + route**.
-4. Then do **Enquiry status** and **Enquiry scoping by role**.
-
-That is the shortest path to a working admin flow.
+1. ~~Fix `DATABASE_URL` and get `GET /api/v1/health` + login green.~~ **Done** (local Postgres).
+2. ~~Run migrate/seed for `VOLUNTEER` + new enquiry/category fields.~~ **Done** (`prisma db push` + seed).
+3. ~~Wire States in sidebar + route.~~ **Done**.
+4. ~~Enquiry status + enquiry scoping by role.~~ **Done**.
+5. **Next:** Phase D — password reset email + image upload, then Phase E QA.

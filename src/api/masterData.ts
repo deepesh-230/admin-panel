@@ -14,6 +14,7 @@ export type Category = {
   name: string;
   slug: string | null;
   description: string | null;
+  type?: 'CARE' | 'SERVICE';
   isActive: boolean;
   sortOrder: number;
   _count?: { subcategories: number };

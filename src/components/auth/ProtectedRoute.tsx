@@ -5,6 +5,7 @@ import { canAccess } from '../../utils/roleAccess';
 
 const ROUTE_PERMISSIONS: Record<string, string> = {
   '/dashboard': 'dashboard.read',
+  '/states': 'states.read',
   '/service-provider/category': 'categories.read',
   '/service-provider/sub-category': 'categories.read',
   '/service-provider/listing': 'providers.read',

@@ -6,7 +6,14 @@ import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
 import { categoriesApi, type Category } from '../api/masterData';
 
-const emptyForm = { name: '', slug: '', description: '', isActive: true, sortOrder: 0 };
+const emptyForm = {
+  name: '',
+  slug: '',
+  description: '',
+  type: 'SERVICE' as 'CARE' | 'SERVICE',
+  isActive: true,
+  sortOrder: 0,
+};
 
 export const CategoriesList = () => {
   const [items, setItems] = useState<Category[]>([]);
@@ -54,6 +61,7 @@ export const CategoriesList = () => {
       name: item.name,
       slug: item.slug || '',
       description: item.description || '',
+      type: item.type || 'SERVICE',
       isActive: item.isActive,
       sortOrder: item.sortOrder,
     });
@@ -68,6 +76,7 @@ export const CategoriesList = () => {
         name: form.name.trim(),
         slug: form.slug.trim() || undefined,
         description: form.description.trim() || undefined,
+        type: form.type,
         isActive: form.isActive,
         sortOrder: Number(form.sortOrder) || 0,
       };
@@ -137,6 +146,7 @@ export const CategoriesList = () => {
               <thead className="bg-[#f8fafc] text-gray-700 font-semibold border-y border-gray-200">
                 <tr>
                   <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Slug</th>
                   <th className="px-4 py-3">Subcategories</th>
                   <th className="px-4 py-3">Status</th>
@@ -147,6 +157,9 @@ export const CategoriesList = () => {
                 {items.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50/50">
                     <td className="px-4 py-3 font-medium text-gray-800">{item.name}</td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {item.type === 'CARE' ? 'Home' : 'Providers'}
+                    </td>
                     <td className="px-4 py-3 text-gray-500">{item.slug || '—'}</td>
                     <td className="px-4 py-3 text-gray-600">{item._count?.subcategories ?? 0}</td>
                     <td className="px-4 py-3">
@@ -172,7 +185,7 @@ export const CategoriesList = () => {
                 ))}
                 {!items.length && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-gray-500">
+                    <td colSpan={6} className="px-4 py-10 text-center text-gray-500">
                       No categories found.
                     </td>
                   </tr>
@@ -206,6 +219,19 @@ export const CategoriesList = () => {
               className="w-full h-10 px-3 rounded-md border border-gray-300 text-sm"
               placeholder="auto from name if empty"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Type *</label>
+            <select
+              value={form.type}
+              onChange={(e) =>
+                setForm({ ...form, type: e.target.value as 'CARE' | 'SERVICE' })
+              }
+              className="w-full h-10 px-3 rounded-md border border-gray-300 text-sm"
+            >
+              <option value="SERVICE">Providers (Service)</option>
+              <option value="CARE">Home (Care)</option>
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Description</label>

@@ -41,19 +41,19 @@ export const TableToolbar = ({
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button variant="primary" className="h-10 bg-[#8b5cf6] hover:bg-[#7c3aed]">
+        <Button variant="primary" className="h-10">
           Filter
         </Button>
       </div>
       <div className="flex items-center gap-3">
-        <Button variant="secondary" className="h-10 bg-[#64748b] hover:bg-[#475569]">
+        <Button variant="secondary" className="h-10">
           Reset
         </Button>
-        <Button variant="success" className="h-10 bg-[#22c55e] hover:bg-[#16a34a]">
+        <Button variant="success" className="h-10">
           Export
         </Button>
         {onAdd && (
-          <Button onClick={onAdd} variant="primary" className="h-10 bg-[#8b5cf6] hover:bg-[#7c3aed]" icon={<Plus size={16} />}>
+          <Button onClick={onAdd} variant="primary" className="h-10" icon={<Plus size={16} />}>
             Add Enquiry
           </Button>
         )}
