@@ -4,6 +4,7 @@ import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
+import { BulkImportButton } from '../components/BulkImportButton';
 import {
   categoriesApi,
   keywordsApi,
@@ -193,9 +194,24 @@ export const SubcategoriesList = () => {
               ))}
             </select>
           </div>
-          <Button onClick={openCreate} disabled={!categoryId} icon={<Plus size={16} />}>
-            Add Sub Category
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <BulkImportButton
+              entity="subcategories"
+              context={{ categoryId }}
+              disabled={!categoryId}
+              onSuccess={load}
+            />
+            {/* <BulkImportButton
+              entity="keywords"
+              label="Import keywords"
+              context={{ categoryId }}
+              disabled={!categoryId}
+              onSuccess={load}
+            /> */}
+            <Button onClick={openCreate} disabled={!categoryId} icon={<Plus size={16} />}>
+              Add Sub Category
+            </Button>
+          </div>
         </div>
 
         {loading ? (

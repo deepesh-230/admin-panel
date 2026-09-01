@@ -12,9 +12,9 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { CategoriesList } from './pages/CategoriesList';
 import { SubcategoriesList } from './pages/SubcategoriesList';
 import { StateAdminsList } from './pages/StateAdminsList';
-import { VolunteerAdminsList } from './pages/VolunteerAdminsList';
 import { UsersList } from './pages/UsersList';
 import { ServiceProvidersList } from './pages/ServiceProvidersList';
+import { PaymentsList } from './pages/PaymentsList';
 import {
   BlogsPage,
   FaqPage,
@@ -74,7 +74,7 @@ function App() {
                     <Route path="/app-users" element={<UsersList lockedRole="END_USER" />} />
                     <Route path="/provider-admins" element={<UsersList lockedRole="SERVICE_PROVIDER_ADMIN" title="Provider admins" parent="Service Provider" />} />
                     <Route path="/state-admins" element={<StateAdminsList />} />
-                    <Route path="/volunteer-admins" element={<VolunteerAdminsList />} />
+                    <Route path="/volunteer-admins" element={<Navigate to="/volunteers" replace />} />
                     <Route path="/enquiries/user" element={<EnquiriesList kind="USER" title="User enquiry" />} />
                     <Route
                       path="/enquiries/provider"
@@ -84,6 +84,7 @@ function App() {
                     <Route path="/marketplace/buyers" element={<MarketplaceBuyersPage />} />
                     <Route path="/marketplace/sellers" element={<MarketplaceSellersPage />} />
                     <Route path="/volunteers" element={<VolunteersPage />} />
+                    <Route path="/payments" element={<PaymentsList />} />
                     <Route path="/faq" element={<FaqPage />} />
                     <Route path="/useful-links" element={<UsefulLinksPage />} />
                     <Route path="/support" element={<HelpSupportPage />} />

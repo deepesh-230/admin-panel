@@ -5,6 +5,8 @@ import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
 import { ToggleSwitch } from '../components/common/ToggleSwitch';
+import { ImageUrlField } from '../components/ui/ImageUrlField';
+import { BulkImportButton } from '../components/BulkImportButton';
 import {
   categoriesApi,
   statesApi,
@@ -370,9 +372,14 @@ export const ServiceProvidersList = () => {
           title="Listing"
           paths={[{ name: 'Service Provider' }, { name: 'Listing' }]}
         />
-        <Button onClick={openCreate} icon={<Plus size={16} />} className={isProviderAdmin ? 'hidden' : ''}>
-          Add Provider
-        </Button>
+        <div className="flex gap-2">
+          {!isProviderAdmin && (
+            <BulkImportButton entity="service-providers" onSuccess={load} />
+          )}
+          <Button onClick={openCreate} icon={<Plus size={16} />} className={isProviderAdmin ? 'hidden' : ''}>
+            Add Provider
+          </Button>
+        </div>
       </div>
 
       {!isProviderAdmin && (
@@ -780,11 +787,11 @@ export const ServiceProvidersList = () => {
             rows={2}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
           />
-          <input
+          <ImageUrlField
+            label="Cover photo"
             value={form.coverPhotoUrl}
-            onChange={(e) => setForm({ ...form, coverPhotoUrl: e.target.value })}
+            onChange={(url) => setForm({ ...form, coverPhotoUrl: url })}
             placeholder="Cover photo URL"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
           />
           <label className="flex items-center gap-2 text-sm text-slate-700">
             <ToggleSwitch

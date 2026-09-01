@@ -2,14 +2,17 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { cmsApi, type CmsRecord } from '../api/cms';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
+import { ImageUrlField } from '../components/ui/ImageUrlField';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
+import { BulkImportButton } from '../components/BulkImportButton';
+import type { BulkImportEntity } from '../api/bulkImport';
 
 export type CrudField = {
   key: string;
   label: string;
-  type?: 'text' | 'textarea' | 'url' | 'checkbox';
+  type?: 'text' | 'textarea' | 'url' | 'checkbox' | 'image';
   required?: boolean;
 };
 
@@ -22,6 +25,7 @@ type Props = {
   extraQuery?: Record<string, string>;
   createDefaults?: Record<string, unknown>;
   broadcast?: boolean;
+  bulkImportEntity?: BulkImportEntity;
 };
 
 function emptyForm(fields: CrudField[], defaults?: Record<string, unknown>) {
@@ -41,6 +45,7 @@ export function SimpleCrudPage({
   extraQuery,
   createDefaults,
   broadcast,
+  bulkImportEntity,
 }: Props) {
   const api = cmsApi(endpoint);
   const columns = listColumns ?? fields.map((f) => f.key);
@@ -131,8 +136,16 @@ export function SimpleCrudPage({
 
   const handleBroadcast = async (item: CmsRecord) => {
     try {
-      await api.broadcast(item.id);
-      setToast({ visible: true, message: 'Link broadcast to all users', type: 'success' });
+      const result = await api.broadcast(item.id);
+      setToast({
+        visible: true,
+        message:
+          result.message ||
+          (typeof result.recipientCount === 'number'
+            ? `Broadcast sent to ${result.recipientCount} app user(s)`
+            : 'Broadcast sent to app users'),
+        type: 'success',
+      });
       load();
     } catch (err) {
       setToast({
@@ -172,9 +185,14 @@ export function SimpleCrudPage({
               className="h-10 w-64 pl-9 pr-3 rounded-md border border-gray-300 text-sm"
             />
           </div>
-          <Button onClick={openCreate} icon={<Plus size={16} />}>
-            Add
-          </Button>
+          <div className="flex gap-2">
+            {bulkImportEntity && (
+              <BulkImportButton entity={bulkImportEntity} onSuccess={load} />
+            )}
+            <Button onClick={openCreate} icon={<Plus size={16} />}>
+              Add
+            </Button>
+          </div>
         </div>
 
         {loading ? (
@@ -252,6 +270,13 @@ export function SimpleCrudPage({
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm min-h-[90px]"
                   />
                 </>
+              ) : field.type === 'image' ? (
+                <ImageUrlField
+                  label={field.label}
+                  required={field.required}
+                  value={String(form[field.key] ?? '')}
+                  onChange={(url) => setForm((prev) => ({ ...prev, [field.key]: url }))}
+                />
               ) : (
                 <>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>

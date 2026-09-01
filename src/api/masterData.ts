@@ -101,40 +101,6 @@ export const keywordsApi = {
   remove: (id: string) => apiClient.delete<void>(`/api/v1/keywords/${id}`),
 };
 
-export type VolunteerAdmin = {
-  id: string;
-  email: string;
-  name: string | null;
-  phone: string | null;
-  isActive: boolean;
-  role?: { name: string };
-};
-
-export const volunteerAdminsApi = {
-  getAll: (params?: { search?: string }) => {
-    const sp = new URLSearchParams();
-    if (params?.search) sp.set('search', params.search);
-    const q = sp.toString() ? `?${sp}` : '';
-    return apiClient.get<VolunteerAdmin[]>(`/api/v1/volunteer-admins${q}`);
-  },
-  create: (data: {
-    email: string;
-    password: string;
-    name?: string;
-    phone?: string;
-  }) => apiClient.post<VolunteerAdmin>('/api/v1/volunteer-admins', data),
-  update: (
-    id: string,
-    data: Partial<{
-      name: string;
-      phone: string;
-      isActive: boolean;
-      password: string;
-    }>,
-  ) => apiClient.patch<VolunteerAdmin>(`/api/v1/volunteer-admins/${id}`, data),
-  remove: (id: string) => apiClient.delete<void>(`/api/v1/volunteer-admins/${id}`),
-};
-
 export const stateAdminsApi = {
   getAll: (params?: { search?: string; stateId?: string }) => {
     const sp = new URLSearchParams();

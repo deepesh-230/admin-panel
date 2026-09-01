@@ -33,13 +33,13 @@ Staff can log in, manage master data, approve providers, handle enquiries, and m
 | **Role-based login redirect** | **Done** — each role lands on its home page |
 | Local DB connection | **Fixed** — local Postgres `admin_panel` |
 | States page in sidebar/routes | **Done** |
-| Email for password reset | **Missing** |
-| Image upload | **Missing** |
+| Email for password reset | **Done** — SMTP when configured; console fallback |
+| Image upload | **Done** — `POST /api/v1/uploads` + local disk |
 | Enquiry status workflow | **Done** — NEW / CONTACTED / CLOSED |
 | Enquiry scoping by role | **Done** — admin / state / provider / volunteer |
 | Category Home vs Providers type | **Done** — `CARE` / `SERVICE` |
 
-**Bottom line:** Phases A–C core tickets done. Next: Phase D (email + upload), then Phase E harden / QA.
+**Bottom line:** Phases A–D core tickets done. Next: Phase E harden / QA.
 
 ---
 
@@ -283,29 +283,24 @@ Staff flows feel unfinished without mail and uploads.
 
 ### D1. Password reset email
 
-**Today:** token is logged / returned in non-prod.
+**Status: Done**
 
-**Do:**
+- `MailModule` + `MailService` (nodemailer / SMTP).
+- Reset link: `{ADMIN_URL}/reset-password?token=...`
+- If `SMTP_HOST` is unset, link is logged to the server console (local fallback).
+- Token still returned in API only when non-prod or `AUTH_EXPOSE_RESET_TOKEN=true`.
+- Admin Forgot Password page: “If the email exists, we sent a link.”
 
-1. Pick one mail path (Resend, SES, or SMTP).
-2. Send reset link: `{ADMIN_URL}/reset-password?token=...`
-3. Keep token exposure off in production.
-4. Admin Forgot Password page shows only “If the email exists, we sent a link.”
-
-**Done when:** forgot password sends a real mail in staging.
+**Done when:** forgot password sends a real mail in staging (set SMTP_* in env).
 
 ### D2. Image upload
 
-**Today:** cover / blog image = pasted URL.
+**Status: Done** (local disk)
 
-**Do:**
-
-1. Add `POST /api/v1/uploads` (auth required, admin / state admin).
-2. Store in S3 / Cloudinary / local `uploads/` (pick one).
-3. Return public URL.
-4. Admin forms: file picker that sets the URL field.
-
-**Start with:** provider cover photo + blog image.
+1. `POST /api/v1/uploads` — auth + ADMIN / STATE_ADMIN / SERVICE_PROVIDER_ADMIN.
+2. Files stored under `uploads/` and served at `/uploads/:filename`.
+3. Returns `{ url, filename }`.
+4. Admin forms: file picker on provider cover photo + blog image (paste URL still works).
 
 **Done when:** staff can upload a cover without leaving the form.
 
@@ -415,8 +410,8 @@ Work these as tickets, top first:
 | 4 | **Enquiry scoping by role** | C | M | **Done** |
 | 5 | Category type field + admin form | C | M | **Done** |
 | 6 | Document / quarantine old listings | C | S | **Done** |
-| 7 | Password reset email | D | M | Open |
-| 8 | Upload API + provider cover picker | D | M | Open |
+| 7 | Password reset email | D | M | **Done** |
+| 8 | Upload API + provider cover picker | D | M | **Done** |
 | 9 | Lock state for STATE_ADMIN forms | E | S | Open |
 | 10 | Full multi-role QA script | E | M | Open |
 | 11 | Admin freeze + mobile API gap list | F | S | Open |
@@ -494,4 +489,5 @@ Two people: split backend vs admin UI per ticket.
 2. ~~Run migrate/seed for `VOLUNTEER` + new enquiry/category fields.~~ **Done** (`prisma db push` + seed).
 3. ~~Wire States in sidebar + route.~~ **Done**.
 4. ~~Enquiry status + enquiry scoping by role.~~ **Done**.
-5. **Next:** Phase D — password reset email + image upload, then Phase E QA.
+5. ~~Phase D — password reset email + image upload.~~ **Done**.
+6. **Next:** Phase E — state lock for STATE_ADMIN, multi-role QA, then Phase F freeze.

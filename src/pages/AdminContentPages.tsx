@@ -5,6 +5,7 @@ export const FaqPage = () => (
     title="FAQ"
     parent="Content"
     endpoint="faqs"
+    bulkImportEntity="faqs"
     fields={[
       { key: 'title', label: 'Title', required: true },
       { key: 'description', label: 'Description', type: 'textarea' },
@@ -19,6 +20,7 @@ export const UsefulLinksPage = () => (
     title="Useful link"
     parent="Content"
     endpoint="useful-links"
+    bulkImportEntity="useful-links"
     broadcast
     fields={[
       { key: 'title', label: 'Title', required: true },
@@ -65,11 +67,12 @@ export const BlogsPage = () => (
     title="Blogs"
     parent="Content"
     endpoint="blogs"
+    bulkImportEntity="blogs"
     fields={[
       { key: 'title', label: 'Title', required: true },
       { key: 'shortDescription', label: 'Short description', type: 'textarea' },
       { key: 'description', label: 'Description', type: 'textarea' },
-      { key: 'image', label: 'Image URL' },
+      { key: 'image', label: 'Image', type: 'image' },
       { key: 'isActive', label: 'Active', type: 'checkbox' },
     ]}
     listColumns={['title', 'shortDescription', 'isActive']}
@@ -81,6 +84,8 @@ export const JobAlertsPage = () => (
     title="Job alerts"
     parent="Content"
     endpoint="job-alerts"
+    bulkImportEntity="job-alerts"
+    broadcast
     fields={[
       { key: 'title', label: 'Title', required: true },
       { key: 'description', label: 'Description', type: 'textarea' },
@@ -88,7 +93,7 @@ export const JobAlertsPage = () => (
       { key: 'lastDate', label: 'Last date' },
       { key: 'isActive', label: 'Active', type: 'checkbox' },
     ]}
-    listColumns={['title', 'postDate', 'lastDate', 'isActive']}
+    listColumns={['title', 'postDate', 'lastDate', 'broadcastAt', 'isActive']}
   />
 );
 
@@ -109,9 +114,10 @@ export const SuggestionsPage = () => (
 
 export const VolunteersPage = () => (
   <SimpleCrudPage
-    title="Volunteer Admin"
-    parent="Admin"
+    title="Listing"
+    parent="Volunteers"
     endpoint="volunteers"
+    bulkImportEntity="volunteers"
     fields={[
       { key: 'name', label: 'Name', required: true },
       { key: 'email', label: 'Email' },
@@ -128,6 +134,7 @@ export const MarketplaceProductsPage = () => (
     title="Product listing"
     parent="Market Place"
     endpoint="marketplace/products"
+    bulkImportEntity="marketplace-products"
     fields={[
       { key: 'name', label: 'Product', required: true },
       { key: 'actualPrice', label: 'Actual price' },

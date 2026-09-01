@@ -17,7 +17,7 @@ export const ForgotPassword = () => {
     setSubmitting(true);
     try {
       const data = await authApi.forgotPassword(email.trim());
-      setMessage('If the email exists, a reset link has been sent.');
+      setMessage('If the email exists, we sent a link.');
       if (data?.resetToken) {
         setResetToken(data.resetToken);
       }
@@ -33,7 +33,7 @@ export const ForgotPassword = () => {
       <div className="w-full max-w-md bg-white rounded-xl border border-[#e5e7eb] shadow-sm p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Forgot password</h1>
         <p className="text-sm text-gray-500 mb-6">
-          Enter your admin email to receive a password reset token.
+          Enter your admin email. If an account exists, we will send a password reset link.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -60,7 +60,7 @@ export const ForgotPassword = () => {
           )}
           {resetToken && (
             <div className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-md px-3 py-2 break-all">
-              Dev reset token: {resetToken}
+              Dev reset token (email not configured or non-prod): {resetToken}
               <div className="mt-2">
                 <Link
                   to={`/reset-password?token=${encodeURIComponent(resetToken)}`}

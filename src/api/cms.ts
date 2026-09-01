@@ -2,6 +2,11 @@ import { apiClient } from '../utils/apiClient';
 
 export type CmsRecord = Record<string, unknown> & { id: string };
 
+export type BroadcastResponse = CmsRecord & {
+  recipientCount?: number;
+  message?: string;
+};
+
 export function cmsApi(basePath: string) {
   return {
     getAll: (search?: string, extra?: Record<string, string>) => {
@@ -21,6 +26,6 @@ export function cmsApi(basePath: string) {
       apiClient.patch<CmsRecord>(`/api/v1/${basePath}/${id}`, data),
     remove: (id: string) => apiClient.delete<void>(`/api/v1/${basePath}/${id}`),
     broadcast: (id: string) =>
-      apiClient.patch<CmsRecord>(`/api/v1/${basePath}/${id}/broadcast`, {}),
+      apiClient.patch<BroadcastResponse>(`/api/v1/${basePath}/${id}/broadcast`, {}),
   };
 }

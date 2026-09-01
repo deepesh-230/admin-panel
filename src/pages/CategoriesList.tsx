@@ -4,6 +4,7 @@ import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
+import { BulkImportButton } from '../components/BulkImportButton';
 import { categoriesApi, type Category } from '../api/masterData';
 
 const emptyForm = {
@@ -133,9 +134,12 @@ export const CategoriesList = () => {
               className="h-10 w-64 pl-9 pr-3 rounded-md border border-gray-300 text-sm"
             />
           </div>
-          <Button onClick={openCreate} icon={<Plus size={16} />}>
-            Add Category
-          </Button>
+          <div className="flex gap-2">
+            <BulkImportButton entity="categories" onSuccess={load} />
+            <Button onClick={openCreate} icon={<Plus size={16} />}>
+              Add Category
+            </Button>
+          </div>
         </div>
 
         {loading ? (

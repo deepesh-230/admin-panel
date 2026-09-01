@@ -15,12 +15,11 @@ import {
   Newspaper,
   Briefcase,
   Lightbulb,
+  CreditCard,
   ChevronRight,
   ChevronDown,
   PanelLeftClose,
   PanelLeftOpen,
-  MapPin,
-  UserCog,
   X,
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
@@ -39,7 +38,7 @@ interface NavItem {
 
 const ALL_NAV_ITEMS: NavItem[] = [
   { title: 'Dashboard', icon: <LayoutDashboard size={18} />, href: '/dashboard', permission: 'dashboard.read' },
-  { title: 'States', icon: <MapPin size={18} />, href: '/states', permission: 'states.read' },
+  // { title: 'States', icon: <MapPin size={18} />, href: '/states', permission: 'states.read' },
   {
     title: 'Service Provider',
     icon: <BriefcaseMedical size={18} />,
@@ -64,12 +63,6 @@ const ALL_NAV_ITEMS: NavItem[] = [
     children: [{ title: 'Listing', href: '/state-admins', permission: 'state_admins.read' }],
   },
   {
-    title: 'Volunteer accounts',
-    icon: <UserCog size={18} />,
-    permission: 'users.read',
-    children: [{ title: 'Login accounts', href: '/volunteer-admins', permission: 'users.read' }],
-  },
-  {
     title: 'Enquiry',
     icon: <MessageSquareWarning size={18} />,
     permission: 'enquiries.read',
@@ -88,11 +81,12 @@ const ALL_NAV_ITEMS: NavItem[] = [
       { title: 'Seller', href: '/marketplace/sellers', permission: 'marketplace.read' },
     ],
   },
-  { title: 'Volunteer directory', icon: <HeartHandshake size={18} />, href: '/volunteers', permission: 'volunteers.read' },
+  { title: 'Volunteers', icon: <HeartHandshake size={18} />, href: '/volunteers', permission: 'volunteers.read' },
+  { title: 'Payments', icon: <CreditCard size={18} />, href: '/payments', permission: 'payments.read' },
   { title: 'FAQ', icon: <HelpCircle size={18} />, href: '/faq', permission: 'cms.read' },
   { title: 'Useful link', icon: <LinkIcon size={18} />, href: '/useful-links', permission: 'cms.read' },
-  { title: 'Help & support', icon: <LifeBuoy size={18} />, href: '/support', permission: 'cms.read' },
-  { title: 'Pages', icon: <FileText size={18} />, href: '/pages', permission: 'cms.read' },
+  { title: 'Help & support', icon: <LifeBuoy size={18} />, href: '/#', permission: 'cms.read' },
+  { title: 'Pages', icon: <FileText size={18} />, href: '/#', permission: 'cms.read' },
   { title: 'Blogs', icon: <Newspaper size={18} />, href: '/blogs', permission: 'cms.read' },
   { title: 'Job alerts', icon: <Briefcase size={18} />, href: '/jobs', permission: 'cms.read' },
   { title: 'Suggestions', icon: <Lightbulb size={18} />, href: '/suggestions', permission: 'cms.read' },

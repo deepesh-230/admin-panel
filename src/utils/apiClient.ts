@@ -141,4 +141,29 @@ export const apiClient = {
       body: data === undefined ? undefined : JSON.stringify(data),
     }),
   delete: <T>(endpoint: string) => apiRequest<T>(endpoint, { method: 'DELETE' }),
+  /** Multipart upload — do not set Content-Type (browser sets boundary). */
+  upload: async <T>(endpoint: string, file: File, fieldName = 'file'): Promise<T> => {
+    const form = new FormData();
+    form.append(fieldName, file);
+    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
+    const headers = new Headers();
+    const accessToken = getAccessToken();
+    if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`);
+
+    const response = await fetch(url, { method: 'POST', headers, body: form });
+
+    if (response.status === 401) {
+      const refreshed = await tryRefreshToken();
+      if (refreshed) {
+        const retryHeaders = new Headers();
+        const token = getAccessToken();
+        if (token) retryHeaders.set('Authorization', `Bearer ${token}`);
+        const retry = await fetch(url, { method: 'POST', headers: retryHeaders, body: form });
+        return parseResponse<T>(retry);
+      }
+      clearSession();
+    }
+
+    return parseResponse<T>(response);
+  },
 };
