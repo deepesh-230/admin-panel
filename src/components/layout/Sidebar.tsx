@@ -92,15 +92,19 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { title: 'Suggestions', icon: <Lightbulb size={18} />, href: '/suggestions', permission: 'cms.read' },
 ];
 
-function filterNavItems(items: NavItem[], permissions: string[]): NavItem[] {
+function filterNavItems(
+  items: NavItem[],
+  permissions: string[],
+  role?: string,
+): NavItem[] {
   return items
     .map((item) => {
       if (item.children?.length) {
-        const children = filterNavItems(item.children, permissions);
+        const children = filterNavItems(item.children, permissions, role);
         if (!children.length) return null;
         return { ...item, children };
       }
-      if (item.permission && !canAccess(permissions, item.permission)) return null;
+      if (item.permission && !canAccess(permissions, item.permission, role)) return null;
       return item;
     })
     .filter(Boolean) as NavItem[];
@@ -115,8 +119,8 @@ export const Sidebar = () => {
   const { isCollapsed, toggleSidebar, isMobileMenuOpen, setIsMobileMenuOpen } = useSidebar();
   const { user } = useAuth();
   const navItems = useMemo(
-    () => filterNavItems(ALL_NAV_ITEMS, user?.permissions || []),
-    [user?.permissions],
+    () => filterNavItems(ALL_NAV_ITEMS, user?.permissions || [], user?.role),
+    [user?.permissions, user?.role],
   );
 
   return (

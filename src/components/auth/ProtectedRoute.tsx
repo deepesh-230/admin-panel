@@ -45,7 +45,7 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   }
 
   const required = ROUTE_PERMISSIONS[location.pathname];
-  if (required && !canAccess(user.permissions, required)) {
+  if (required && !canAccess(user.permissions, required, user.role)) {
     return <Navigate to={homePathForRole(user.role)} replace />;
   }
 

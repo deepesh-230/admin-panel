@@ -16,11 +16,20 @@ export function homePathForRole(role: string) {
   }
 }
 
-export function canAccess(permissions: string[] | undefined, code: string) {
+export function canAccess(
+  permissions: string[] | undefined,
+  code: string,
+  role?: string,
+) {
+  if (role === 'ADMIN') return true;
   if (!permissions?.length) return false;
   return permissions.includes(code);
 }
 
-export function canAccessAny(permissions: string[] | undefined, codes: string[]) {
-  return codes.some((code) => canAccess(permissions, code));
+export function canAccessAny(
+  permissions: string[] | undefined,
+  codes: string[],
+  role?: string,
+) {
+  return codes.some((code) => canAccess(permissions, code, role));
 }
