@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import type { Enquiry, EnquiryStatus } from '../../types';
+import type { Enquiry, EnquiryKind, EnquiryStatus } from '../../types';
 import { serviceProvidersApi, type ServiceProvider } from '../../api/serviceProviders';
 
 interface EnquiryFormProps {
   initialData?: Enquiry | null;
-  kind: 'USER' | 'PROVIDER';
+  kind: EnquiryKind;
   onSubmit: (data: Partial<Enquiry>) => void;
   onCancel: () => void;
   isLoading?: boolean;

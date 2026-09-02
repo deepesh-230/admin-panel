@@ -25,6 +25,7 @@ import {
 import { cn } from '../../utils/cn';
 import { useSidebar } from '../../contexts/SidebarContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { ENQUIRY_NAV_ITEMS } from '../../constants/enquiryKinds';
 import { canAccess } from '../../utils/roleAccess';
 
 interface NavItem {
@@ -66,27 +67,24 @@ const ALL_NAV_ITEMS: NavItem[] = [
     title: 'Enquiry',
     icon: <MessageSquareWarning size={18} />,
     permission: 'enquiries.read',
-    children: [
-      { title: 'User enquiry', href: '/enquiries/user', permission: 'enquiries.read' },
-      { title: 'Service provider', href: '/enquiries/provider', permission: 'enquiries.read' },
-    ],
+    children: ENQUIRY_NAV_ITEMS.map((item) => ({
+      title: item.title,
+      href: item.href,
+      permission: 'enquiries.read',
+    })),
   },
   {
     title: 'Market Place',
     icon: <Store size={18} />,
+    href: '/marketplace/products',
     permission: 'marketplace.read',
-    children: [
-      { title: 'Product listing', href: '/marketplace/products', permission: 'marketplace.read' },
-      { title: 'Buyer', href: '/marketplace/buyers', permission: 'marketplace.read' },
-      { title: 'Seller', href: '/marketplace/sellers', permission: 'marketplace.read' },
-    ],
   },
   { title: 'Volunteers', icon: <HeartHandshake size={18} />, href: '/volunteers', permission: 'volunteers.read' },
   { title: 'Payments', icon: <CreditCard size={18} />, href: '/payments', permission: 'payments.read' },
   { title: 'FAQ', icon: <HelpCircle size={18} />, href: '/faq', permission: 'cms.read' },
   { title: 'Useful link', icon: <LinkIcon size={18} />, href: '/useful-links', permission: 'cms.read' },
   { title: 'Help & support', icon: <LifeBuoy size={18} />, href: '/#', permission: 'cms.read' },
-  { title: 'Pages', icon: <FileText size={18} />, href: '/#', permission: 'cms.read' },
+  { title: 'Pages', icon: <FileText size={18} />, href: '/pages', permission: 'cms.read' },
   { title: 'Blogs', icon: <Newspaper size={18} />, href: '/blogs', permission: 'cms.read' },
   { title: 'Job alerts', icon: <Briefcase size={18} />, href: '/jobs', permission: 'cms.read' },
   { title: 'Suggestions', icon: <Lightbulb size={18} />, href: '/suggestions', permission: 'cms.read' },

@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { paymentsApi, type Payment, type PaymentPurpose, type PaymentStatus, type PaymentSummary } from '../api/payments';
+import { DateTimePicker } from '../components/ui/DateTimePicker';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
@@ -131,7 +132,7 @@ export const PaymentsList = () => {
       paymentId: item.paymentId || '',
       referenceNo: item.referenceNo || '',
       notes: item.notes || '',
-      paidAt: item.paidAt ? item.paidAt.slice(0, 16) : '',
+      paidAt: item.paidAt || '',
     });
     setModalOpen(true);
   };
@@ -505,15 +506,11 @@ export const PaymentsList = () => {
                 ))}
               </select>
             </label>
-            <label className="block">
-              <span className="mb-1 block text-gray-600">Paid at</span>
-              <input
-                type="datetime-local"
-                value={form.paidAt}
-                onChange={(e) => setForm({ ...form, paidAt: e.target.value })}
-                className="w-full rounded-md border border-gray-300 px-3 py-2"
-              />
-            </label>
+            <DateTimePicker
+              label="Paid at"
+              value={form.paidAt}
+              onChange={(paidAt) => setForm({ ...form, paidAt })}
+            />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block">

@@ -3,6 +3,7 @@ import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { cmsApi, type CmsRecord } from '../api/cms';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { ImageUrlField } from '../components/ui/ImageUrlField';
+import { DatePicker } from '../components/ui/DatePicker';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
@@ -12,7 +13,7 @@ import type { BulkImportEntity } from '../api/bulkImport';
 export type CrudField = {
   key: string;
   label: string;
-  type?: 'text' | 'textarea' | 'url' | 'checkbox' | 'image';
+  type?: 'text' | 'textarea' | 'url' | 'checkbox' | 'image' | 'date';
   required?: boolean;
 };
 
@@ -276,6 +277,13 @@ export function SimpleCrudPage({
                   required={field.required}
                   value={String(form[field.key] ?? '')}
                   onChange={(url) => setForm((prev) => ({ ...prev, [field.key]: url }))}
+                />
+              ) : field.type === 'date' ? (
+                <DatePicker
+                  label={field.label}
+                  required={field.required}
+                  value={String(form[field.key] ?? '')}
+                  onChange={(date) => setForm((prev) => ({ ...prev, [field.key]: date }))}
                 />
               ) : (
                 <>

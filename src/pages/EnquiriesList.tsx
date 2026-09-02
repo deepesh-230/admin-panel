@@ -6,10 +6,10 @@ import { Modal } from '../components/common/Modal';
 import { EnquiryForm } from '../components/ui/EnquiryForm';
 import { Toast } from '../components/common/Toast';
 import { enquiriesApi } from '../api/enquiries';
-import type { Enquiry, EnquiryStatus } from '../types';
+import type { Enquiry, EnquiryKind, EnquiryStatus } from '../types';
 
 type Props = {
-  kind: 'USER' | 'PROVIDER';
+  kind: EnquiryKind;
   title: string;
 };
 

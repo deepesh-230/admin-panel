@@ -15,17 +15,15 @@ import { StateAdminsList } from './pages/StateAdminsList';
 import { UsersList } from './pages/UsersList';
 import { ServiceProvidersList } from './pages/ServiceProvidersList';
 import { PaymentsList } from './pages/PaymentsList';
+import { FaqsList } from './pages/FaqsList';
+import { MarketplaceProductsList } from './pages/MarketplaceProductsList';
+import { PagesList } from './pages/PagesList';
+import { JobAlertsList } from './pages/JobAlertsList';
+import { SuggestionsList } from './pages/SuggestionsList';
+import { UsefulLinksList } from './pages/UsefulLinksList';
 import {
   BlogsPage,
-  FaqPage,
   HelpSupportPage,
-  JobAlertsPage,
-  MarketplaceBuyersPage,
-  MarketplaceProductsPage,
-  MarketplaceSellersPage,
-  PagesPage,
-  SuggestionsPage,
-  UsefulLinksPage,
   VolunteersPage,
 } from './pages/AdminContentPages';
 import { SampleLayout } from './sample/components/SampleLayout';
@@ -80,18 +78,30 @@ function App() {
                       path="/enquiries/provider"
                       element={<EnquiriesList kind="PROVIDER" title="Service provider" />}
                     />
-                    <Route path="/marketplace/products" element={<MarketplaceProductsPage />} />
-                    <Route path="/marketplace/buyers" element={<MarketplaceBuyersPage />} />
-                    <Route path="/marketplace/sellers" element={<MarketplaceSellersPage />} />
+                    <Route
+                      path="/enquiries/volunteer"
+                      element={<EnquiriesList kind="VOLUNTEER" title="Volunteer" />}
+                    />
+                    <Route
+                      path="/enquiries/state-admin"
+                      element={<EnquiriesList kind="STATE_ADMIN" title="State admin" />}
+                    />
+                    <Route
+                      path="/enquiries/product"
+                      element={<EnquiriesList kind="PRODUCT" title="Product enquiry" />}
+                    />
+                    <Route path="/marketplace/products" element={<MarketplaceProductsList />} />
+                    <Route path="/marketplace/buyers" element={<Navigate to="/marketplace/products" replace />} />
+                    <Route path="/marketplace/sellers" element={<Navigate to="/marketplace/products" replace />} />
                     <Route path="/volunteers" element={<VolunteersPage />} />
                     <Route path="/payments" element={<PaymentsList />} />
-                    <Route path="/faq" element={<FaqPage />} />
-                    <Route path="/useful-links" element={<UsefulLinksPage />} />
+                    <Route path="/faq" element={<FaqsList />} />
+                    <Route path="/useful-links" element={<UsefulLinksList />} />
                     <Route path="/support" element={<HelpSupportPage />} />
-                    <Route path="/pages" element={<PagesPage />} />
+                    <Route path="/pages" element={<PagesList />} />
                     <Route path="/blogs" element={<BlogsPage />} />
-                    <Route path="/jobs" element={<JobAlertsPage />} />
-                    <Route path="/suggestions" element={<SuggestionsPage />} />
+                    <Route path="/jobs" element={<JobAlertsList />} />
+                    <Route path="/suggestions" element={<SuggestionsList />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </Layout>
