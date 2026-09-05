@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Listing } from '../../types';
+import { ImageUrlField } from './ImageUrlField';
 
 interface ListingFormProps {
   initialData?: Listing | null;
@@ -19,7 +20,7 @@ export const ListingForm: React.FC<ListingFormProps> = ({
     subCategory: '',
     product: '',
     email: '',
-    image: 'https://placehold.co/60x30/e2e8f0/64748b', // Default placeholder
+    image: '',
     createdBy: 'Admin', // Default for now
     date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
     status: false,
@@ -92,17 +93,13 @@ export const ListingForm: React.FC<ListingFormProps> = ({
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
         />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-        <input 
-          required 
-          type="url" 
-          name="image" 
-          value={formData.image} 
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
-        />
-      </div>
+      <ImageUrlField
+        label="Image"
+        required
+        value={formData.image || ''}
+        onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
+        placeholder="Upload an image"
+      />
       <div className="flex items-center">
         <input
           type="checkbox"

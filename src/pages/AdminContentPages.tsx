@@ -29,7 +29,7 @@ export const BlogsPage = () => (
       { key: 'image', label: 'Image', type: 'image' },
       { key: 'isActive', label: 'Active', type: 'checkbox' },
     ]}
-    listColumns={['title', 'shortDescription', 'isActive']}
+    listColumns={['title', 'image', 'shortDescription', 'isActive']}
   />
 );
 

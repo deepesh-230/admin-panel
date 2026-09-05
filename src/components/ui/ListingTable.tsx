@@ -2,6 +2,7 @@
 import { ArrowDownUp, Edit, Trash2, Eye } from 'lucide-react';
 import type { Listing } from '../../types';
 import { ToggleSwitch } from '../common/ToggleSwitch';
+import { MediaThumb } from './MediaThumb';
 
 interface ListingTableProps {
   data: Listing[];
@@ -73,9 +74,11 @@ export const ListingTable = ({ data, onToggleStatus, onEdit, onDelete }: Listing
               <td className="px-4 py-4 text-gray-600">{row.product}</td>
               <td className="px-4 py-4 text-gray-600">{row.email}</td>
               <td className="px-4 py-4">
-                <div className="w-16 h-8 rounded border border-gray-200 overflow-hidden flex items-center justify-center bg-gray-50">
-                  <img src={row.image} alt="Product Thumbnail" className="object-cover w-full h-full" />
-                </div>
+                <MediaThumb
+                  src={row.image}
+                  alt="Product thumbnail"
+                  className="h-12 w-16 rounded border border-gray-200 object-cover"
+                />
               </td>
               <td className="px-4 py-4 text-gray-600">{row.createdBy}</td>
               <td className="px-4 py-4 text-gray-600 whitespace-nowrap">{row.date}</td>

@@ -7,6 +7,7 @@ import { Button } from '../components/common/Button';
 import { Toast } from '../components/common/Toast';
 import { ToggleSwitch } from '../components/common/ToggleSwitch';
 import { BulkImportButton } from '../components/BulkImportButton';
+import { LifecycleFlagSelect } from '../components/ui/LifecycleFlagSelect';
 import { formatFaqDate } from '../utils/html';
 import {
   dateSortValue,
@@ -20,7 +21,10 @@ type JobAlert = CmsRecord & {
   description?: string | null;
   postDate?: string | null;
   lastDate?: string | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
   isActive?: boolean;
+  adminFlag?: 'READ' | 'ACTIVE' | 'DELETE';
   broadcastAt?: string | null;
   createdAt?: string;
 };
@@ -46,6 +50,7 @@ const COLUMNS: { key: SortKey | null; label: string }[] = [
   { key: 'createdAt', label: 'Created Date' },
   { key: 'createdTime', label: 'Created Time' },
   { key: 'isActive', label: 'Status' },
+  { key: null, label: 'Flag' },
 ];
 
 function SortHeader({
@@ -204,6 +209,8 @@ export const JobAlertsList = () => {
         description: form.description.trim() || undefined,
         postDate: form.postDate || undefined,
         lastDate: form.lastDate || undefined,
+        startsAt: form.postDate ? new Date(form.postDate).toISOString() : undefined,
+        endsAt: form.lastDate ? new Date(form.lastDate).toISOString() : undefined,
         isActive: form.isActive,
       };
       if (editing) await api.update(editing.id, payload);
@@ -434,7 +441,7 @@ export const JobAlertsList = () => {
               <tbody className="divide-y divide-gray-100">
                 {paged.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={9} className="px-4 py-8 text-center text-gray-500">
                       No job alerts found
                     </td>
                   </tr>
@@ -470,6 +477,21 @@ export const JobAlertsList = () => {
                           <ToggleSwitch
                             checked={Boolean(item.isActive)}
                             onChange={(checked) => handleStatusToggle(item, checked)}
+                          />
+                        </td>
+                        <td className="px-4 py-3">
+                          <LifecycleFlagSelect
+                            entity="jobAlert"
+                            id={item.id}
+                            value={item.adminFlag}
+                            onChanged={(flag) =>
+                              setItems((rows) =>
+                                rows.map((r) => (r.id === item.id ? { ...r, adminFlag: flag } : r)),
+                              )
+                            }
+                            onError={(message) =>
+                              setToast({ visible: true, message, type: 'error' })
+                            }
                           />
                         </td>
                         <td className="px-4 py-3">

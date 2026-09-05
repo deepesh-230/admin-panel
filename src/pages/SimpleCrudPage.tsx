@@ -3,6 +3,7 @@ import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { cmsApi, type CmsRecord } from '../api/cms';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { ImageUrlField } from '../components/ui/ImageUrlField';
+import { MediaThumb } from '../components/ui/MediaThumb';
 import { DatePicker } from '../components/ui/DatePicker';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
@@ -159,6 +160,16 @@ export function SimpleCrudPage({
 
   const display = (item: CmsRecord, key: string) => {
     const value = item[key];
+    const field = fields.find((f) => f.key === key);
+    if (field?.type === 'image') {
+      return (
+        <MediaThumb
+          src={typeof value === 'string' ? value : null}
+          alt=""
+          className="h-10 w-10 rounded object-cover border border-gray-100"
+        />
+      );
+    }
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';
     if (value == null) return '—';
     return String(value);
@@ -217,7 +228,12 @@ export function SimpleCrudPage({
                 {items.map((item) => (
                   <tr key={item.id} className="border-t border-gray-100">
                     {columns.map((col) => (
-                      <td key={col} className="px-4 py-3 text-gray-700 max-w-xs truncate">
+                      <td
+                        key={col}
+                        className={`px-4 py-3 text-gray-700 max-w-xs ${
+                          fields.find((f) => f.key === col)?.type === 'image' ? '' : 'truncate'
+                        }`}
+                      >
                         {display(item, col)}
                       </td>
                     ))}

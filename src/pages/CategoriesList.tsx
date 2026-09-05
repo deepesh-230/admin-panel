@@ -1,5 +1,5 @@
-import { useEffect, useState, type FormEvent } from 'react';
-import { Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { ArrowDownAZ, ArrowUpAZ, Plus, Pencil, Trash2, Search } from 'lucide-react';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
@@ -16,9 +16,12 @@ const emptyForm = {
   sortOrder: 0,
 };
 
+type SortDir = 'asc' | 'desc';
+
 export const CategoriesList = () => {
   const [items, setItems] = useState<Category[]>([]);
   const [search, setSearch] = useState('');
+  const [indexDir, setIndexDir] = useState<SortDir>('asc');
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
@@ -50,9 +53,24 @@ export const CategoriesList = () => {
     return () => clearTimeout(t);
   }, [search]);
 
+  const sortedItems = useMemo(() => {
+    const next = [...items];
+    next.sort((a, b) => {
+      const diff = (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+      if (diff !== 0) return indexDir === 'asc' ? diff : -diff;
+      return a.name.localeCompare(b.name);
+    });
+    return next;
+  }, [items, indexDir]);
+
+  const nextSortOrder = useMemo(() => {
+    if (!items.length) return 1;
+    return Math.max(...items.map((item) => item.sortOrder ?? 0)) + 1;
+  }, [items]);
+
   const openCreate = () => {
     setEditing(null);
-    setForm(emptyForm);
+    setForm({ ...emptyForm, sortOrder: nextSortOrder });
     setModalOpen(true);
   };
 
@@ -149,6 +167,17 @@ export const CategoriesList = () => {
             <table className="w-full text-sm text-left">
               <thead className="bg-[#f8fafc] text-gray-700 font-semibold border-y border-gray-200">
                 <tr>
+                  <th className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => setIndexDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
+                      className="inline-flex items-center gap-1.5 hover:text-primary"
+                      title="Sort by index number"
+                    >
+                      Index
+                      {indexDir === 'asc' ? <ArrowUpAZ size={14} /> : <ArrowDownAZ size={14} />}
+                    </button>
+                  </th>
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Slug</th>
@@ -158,8 +187,9 @@ export const CategoriesList = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {items.map((item) => (
+                {sortedItems.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50/50">
+                    <td className="px-4 py-3 font-mono text-gray-700">{item.sortOrder ?? 0}</td>
                     <td className="px-4 py-3 font-medium text-gray-800">{item.name}</td>
                     <td className="px-4 py-3 text-gray-600">
                       {item.type === 'CARE' ? 'Home' : 'Providers'}
@@ -187,9 +217,9 @@ export const CategoriesList = () => {
                     </td>
                   </tr>
                 ))}
-                {!items.length && (
+                {!sortedItems.length && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-10 text-center text-gray-500">
+                    <td colSpan={7} className="px-4 py-10 text-center text-gray-500">
                       No categories found.
                     </td>
                   </tr>
@@ -245,7 +275,7 @@ export const CategoriesList = () => {
               className="w-full min-h-20 px-3 py-2 rounded-md border border-gray-300 text-sm"
             />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -255,14 +285,18 @@ export const CategoriesList = () => {
               Active
             </label>
             <label className="flex items-center gap-2 text-sm">
-              Sort
+              Index
               <input
                 type="number"
                 value={form.sortOrder}
                 onChange={(e) => setForm({ ...form, sortOrder: Number(e.target.value) })}
-                className="w-20 h-9 px-2 rounded-md border border-gray-300 text-sm"
+                className="w-24 h-9 px-2 rounded-md border border-gray-300 text-sm"
+                title="Lower numbers appear first in the mobile app"
               />
             </label>
+            <p className="text-xs text-gray-500 w-full">
+              Lower index appears first in the app (ascending). Same order is used on mobile.
+            </p>
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>

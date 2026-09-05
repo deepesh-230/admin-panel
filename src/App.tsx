@@ -21,6 +21,7 @@ import { PagesList } from './pages/PagesList';
 import { JobAlertsList } from './pages/JobAlertsList';
 import { SuggestionsList } from './pages/SuggestionsList';
 import { UsefulLinksList } from './pages/UsefulLinksList';
+import { EventsList } from './pages/EventsList';
 import {
   BlogsPage,
   HelpSupportPage,
@@ -70,6 +71,12 @@ function App() {
                     <Route path="/emergency/sub-category" element={<Navigate to="/service-provider/sub-category" replace />} />
                     <Route path="/emergency/listing" element={<Navigate to="/service-provider/listing" replace />} />
                     <Route path="/app-users" element={<UsersList lockedRole="END_USER" />} />
+                    <Route
+                      path="/app-volunteers"
+                      element={
+                        <UsersList lockedRole="VOLUNTEER" title="Volunteers" parent="App user" />
+                      }
+                    />
                     <Route path="/provider-admins" element={<UsersList lockedRole="SERVICE_PROVIDER_ADMIN" title="Provider admins" parent="Service Provider" />} />
                     <Route path="/state-admins" element={<StateAdminsList />} />
                     <Route path="/volunteer-admins" element={<Navigate to="/volunteers" replace />} />
@@ -101,6 +108,7 @@ function App() {
                     <Route path="/pages" element={<PagesList />} />
                     <Route path="/blogs" element={<BlogsPage />} />
                     <Route path="/jobs" element={<JobAlertsList />} />
+                    <Route path="/events" element={<EventsList />} />
                     <Route path="/suggestions" element={<SuggestionsList />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>

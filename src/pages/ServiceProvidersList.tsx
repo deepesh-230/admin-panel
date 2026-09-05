@@ -6,6 +6,8 @@ import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
 import { ToggleSwitch } from '../components/common/ToggleSwitch';
 import { ImageUrlField } from '../components/ui/ImageUrlField';
+import { ImageGalleryField } from '../components/ui/ImageGalleryField';
+import { MediaThumb } from '../components/ui/MediaThumb';
 import { BulkImportButton } from '../components/BulkImportButton';
 import {
   categoriesApi,
@@ -47,6 +49,7 @@ const emptyForm = {
   about: '',
   services: '',
   coverPhotoUrl: '',
+  gallery: [] as string[],
   isActive: true,
 };
 
@@ -183,6 +186,7 @@ export const ServiceProvidersList = () => {
       about: item.about || '',
       services: item.services || '',
       coverPhotoUrl: item.coverPhotoUrl || '',
+      gallery: item.gallery || [],
       isActive: item.isActive,
     });
     setModalOpen(true);
@@ -209,6 +213,7 @@ export const ServiceProvidersList = () => {
         about: form.about.trim() || undefined,
         services: form.services.trim() || undefined,
         coverPhotoUrl: form.coverPhotoUrl.trim() || undefined,
+        gallery: form.gallery,
         isActive: form.isActive,
       };
       if (editing) await serviceProvidersApi.update(editing.id, payload);
@@ -544,8 +549,17 @@ export const ServiceProvidersList = () => {
               items.map((item) => (
                 <tr key={item.id} className="hover:bg-slate-50/80">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-slate-900">{item.name}</div>
-                    <div className="text-xs text-slate-500">{item.phone || item.email || '—'}</div>
+                    <div className="flex items-center gap-3">
+                      <MediaThumb
+                        src={item.coverPhotoUrl}
+                        alt={item.name}
+                        className="h-11 w-11 shrink-0 rounded-md border border-slate-200 object-cover"
+                      />
+                      <div>
+                        <div className="font-medium text-slate-900">{item.name}</div>
+                        <div className="text-xs text-slate-500">{item.phone || item.email || '—'}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-slate-600">
                     <div>{item.category?.name || '—'}</div>
@@ -792,6 +806,11 @@ export const ServiceProvidersList = () => {
             value={form.coverPhotoUrl}
             onChange={(url) => setForm({ ...form, coverPhotoUrl: url })}
             placeholder="Cover photo URL"
+          />
+          <ImageGalleryField
+            label="Gallery"
+            value={form.gallery}
+            onChange={(gallery) => setForm({ ...form, gallery })}
           />
           <label className="flex items-center gap-2 text-sm text-slate-700">
             <ToggleSwitch

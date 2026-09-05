@@ -6,6 +6,7 @@ import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
 import { ToggleSwitch } from '../components/common/ToggleSwitch';
+import { LifecycleFlagSelect } from '../components/ui/LifecycleFlagSelect';
 import { formatFaqDate, truncateText } from '../utils/html';
 
 type TicketStatus = 'OPEN' | 'CLOSED' | 'NEW';
@@ -16,6 +17,7 @@ type Suggestion = CmsRecord & {
   receivedFrom?: string | null;
   status?: TicketStatus | string;
   isActive?: boolean;
+  adminFlag?: 'READ' | 'ACTIVE' | 'DELETE';
   createdAt?: string;
 };
 
@@ -47,6 +49,7 @@ const COLUMNS: { key: SortKey | null; label: string }[] = [
   { key: 'status', label: 'Ticket Status' },
   { key: 'createdAt', label: 'Created Date' },
   { key: 'isActive', label: 'Status' },
+  { key: null, label: 'Flag' },
 ];
 
 function SortHeader({
@@ -458,7 +461,7 @@ export const SuggestionsList = () => {
               <tbody className="divide-y divide-gray-100">
                 {paged.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={9} className="px-4 py-8 text-center text-gray-500">
                       No suggestions found
                     </td>
                   </tr>
@@ -500,6 +503,21 @@ export const SuggestionsList = () => {
                           <ToggleSwitch
                             checked={Boolean(item.isActive)}
                             onChange={(checked) => handleStatusToggle(item, checked)}
+                          />
+                        </td>
+                        <td className="px-4 py-3">
+                          <LifecycleFlagSelect
+                            entity="suggestion"
+                            id={item.id}
+                            value={item.adminFlag}
+                            onChanged={(flag) =>
+                              setItems((rows) =>
+                                rows.map((r) => (r.id === item.id ? { ...r, adminFlag: flag } : r)),
+                              )
+                            }
+                            onError={(message) =>
+                              setToast({ visible: true, message, type: 'error' })
+                            }
                           />
                         </td>
                         <td className="px-4 py-3">

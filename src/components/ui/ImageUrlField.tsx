@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { uploadsApi } from '../../api/uploads';
+import { MediaThumb } from './MediaThumb';
 
 type Props = {
   label: string;
@@ -66,13 +67,10 @@ export function ImageUrlField({
         </div>
       </div>
       {value ? (
-        <img
+        <MediaThumb
           src={value}
           alt=""
-          className="mt-2 h-20 w-auto max-w-full rounded border border-slate-100 object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = 'none';
-          }}
+          className="mt-2 h-20 w-auto max-w-full min-w-20 rounded border border-slate-100 object-cover"
         />
       ) : null}
       {error ? <p className="mt-1 text-xs text-red-600">{error}</p> : null}

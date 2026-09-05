@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, HeartHandshake, UserMinus } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Button } from '../components/common/Button';
@@ -9,7 +9,7 @@ import { ToggleSwitch } from '../components/common/ToggleSwitch';
 import { statesApi, type State } from '../api/masterData';
 import { usersApi, type AppUser } from '../api/users';
 
-const ROLES = ['END_USER', 'SERVICE_PROVIDER_ADMIN', 'STATE_ADMIN', 'ADMIN'] as const;
+const ROLES = ['END_USER', 'VOLUNTEER', 'SERVICE_PROVIDER_ADMIN', 'STATE_ADMIN', 'ADMIN'] as const;
 
 type StatusTab = 'all' | 'active' | 'inactive';
 
@@ -47,7 +47,11 @@ export const UsersList = ({
     role: 'END_USER',
     stateId: '',
     isActive: true,
+    isVolunteer: false,
   });
+
+  const showVolunteerCheckbox =
+    lockedRole === 'END_USER' || lockedRole === 'VOLUNTEER';
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ visible: boolean; message: string; type: 'success' | 'error' }>({
     visible: false,
@@ -101,6 +105,13 @@ export const UsersList = ({
     return () => clearTimeout(t);
   }, [search, role, stateId, statusTab, page]);
 
+  const resolveRole = () => {
+    if (showVolunteerCheckbox) {
+      return form.isVolunteer ? 'VOLUNTEER' : 'END_USER';
+    }
+    return lockedRole || form.role;
+  };
+
   const openCreate = () => {
     setEditing(null);
     setForm({
@@ -111,6 +122,7 @@ export const UsersList = ({
       role: lockedRole || 'END_USER',
       stateId: '',
       isActive: true,
+      isVolunteer: lockedRole === 'VOLUNTEER',
     });
     setModalOpen(true);
   };
@@ -125,6 +137,7 @@ export const UsersList = ({
       role: user.role,
       stateId: user.stateId || '',
       isActive: user.isActive,
+      isVolunteer: user.role === 'VOLUNTEER',
     });
     setModalOpen(true);
   };
@@ -133,11 +146,12 @@ export const UsersList = ({
     e.preventDefault();
     setSaving(true);
     try {
+      const role = resolveRole();
       if (editing) {
         await usersApi.update(editing.id, {
           name: form.name || undefined,
           phone: form.phone || undefined,
-          role: form.role,
+          role,
           stateId: form.stateId || null,
           isActive: form.isActive,
           ...(form.password ? { password: form.password } : {}),
@@ -148,7 +162,7 @@ export const UsersList = ({
           password: form.password,
           name: form.name || undefined,
           phone: form.phone || undefined,
-          role: form.role,
+          role,
           stateId: form.stateId || undefined,
           isActive: form.isActive,
         });
@@ -200,13 +214,37 @@ export const UsersList = ({
     }
   };
 
+  const handleVolunteerRole = async (user: AppUser, makeVolunteer: boolean) => {
+    const label = makeVolunteer ? 'promote to Volunteer' : 'remove Volunteer role';
+    if (!window.confirm(`${label} for "${user.email}"?`)) return;
+    try {
+      await usersApi.update(user.id, {
+        role: makeVolunteer ? 'VOLUNTEER' : 'END_USER',
+      });
+      setToast({
+        visible: true,
+        message: makeVolunteer ? 'User is now a Volunteer' : 'Volunteer role removed',
+        type: 'success',
+      });
+      load();
+    } catch (err) {
+      setToast({
+        visible: true,
+        message: err instanceof Error ? err.message : 'Role update failed',
+        type: 'error',
+      });
+    }
+  };
+
   const parentLabel =
     parent ||
     (lockedRole === 'END_USER'
       ? 'App user'
-      : lockedRole === 'SERVICE_PROVIDER_ADMIN'
-        ? 'Service Provider'
-        : 'User Management');
+      : lockedRole === 'VOLUNTEER'
+        ? 'App user'
+        : lockedRole === 'SERVICE_PROVIDER_ADMIN'
+          ? 'Service Provider'
+          : 'User Management');
 
   return (
     <div className="flex flex-col max-w-full">
@@ -332,6 +370,26 @@ export const UsersList = ({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-2">
+                        {(user.role === 'END_USER' || lockedRole === 'END_USER') && (
+                          <button
+                            type="button"
+                            title="Make Volunteer"
+                            onClick={() => handleVolunteerRole(user, true)}
+                            className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded"
+                          >
+                            <HeartHandshake size={15} />
+                          </button>
+                        )}
+                        {(user.role === 'VOLUNTEER' || lockedRole === 'VOLUNTEER') && (
+                          <button
+                            type="button"
+                            title="Remove Volunteer"
+                            onClick={() => handleVolunteerRole(user, false)}
+                            className="p-1.5 text-amber-600 hover:bg-amber-50 rounded"
+                          >
+                            <UserMinus size={15} />
+                          </button>
+                        )}
                         <button
                           onClick={() => openEdit(user)}
                           className="p-1.5 text-primary hover:bg-primary/10 rounded"
@@ -464,6 +522,16 @@ export const UsersList = ({
               ))}
             </select>
           </div>
+          {showVolunteerCheckbox && (
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.isVolunteer}
+                onChange={(e) => setForm({ ...form, isVolunteer: e.target.checked })}
+              />
+              Volunteer
+            </label>
+          )}
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"

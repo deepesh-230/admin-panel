@@ -1,5 +1,7 @@
 import { ArrowDownUp, Trash2, Edit } from 'lucide-react';
 import type { Enquiry, EnquiryStatus } from '../../types';
+import { LifecycleFlagSelect } from './LifecycleFlagSelect';
+import type { AdminLifecycleFlag } from '../../api/dashboard';
 
 const STATUS_STYLES: Record<EnquiryStatus, string> = {
   NEW: 'bg-blue-50 text-blue-700',
@@ -12,9 +14,18 @@ interface TableProps {
   onEdit: (item: Enquiry) => void;
   onDelete: (id: string) => void;
   onStatusChange: (item: Enquiry, status: EnquiryStatus) => void;
+  onFlagChange?: (item: Enquiry, flag: AdminLifecycleFlag) => void;
+  onFlagError?: (message: string) => void;
 }
 
-export const Table = ({ data, onEdit, onDelete, onStatusChange }: TableProps) => {
+export const Table = ({
+  data,
+  onEdit,
+  onDelete,
+  onStatusChange,
+  onFlagChange,
+  onFlagError,
+}: TableProps) => {
   if (!data.length) {
     return <div className="p-10 text-center text-gray-500">No enquiries found.</div>;
   }
@@ -35,6 +46,7 @@ export const Table = ({ data, onEdit, onDelete, onStatusChange }: TableProps) =>
             <th className="px-4 py-4 whitespace-nowrap">Name</th>
             <th className="px-4 py-4 whitespace-nowrap">Email</th>
             <th className="px-4 py-4 whitespace-nowrap">Status</th>
+            <th className="px-4 py-4 whitespace-nowrap">Flag</th>
             <th className="px-4 py-4 whitespace-nowrap">Date</th>
             <th className="px-4 py-4 whitespace-nowrap">Created By</th>
             <th className="px-4 py-4 whitespace-nowrap text-center">Actions</th>
@@ -61,6 +73,15 @@ export const Table = ({ data, onEdit, onDelete, onStatusChange }: TableProps) =>
                     <option value="CONTACTED">Contacted</option>
                     <option value="CLOSED">Closed</option>
                   </select>
+                </td>
+                <td className="px-4 py-4">
+                  <LifecycleFlagSelect
+                    entity="enquiry"
+                    id={row.id}
+                    value={row.adminFlag}
+                    onChanged={(flag) => onFlagChange?.(row, flag)}
+                    onError={onFlagError}
+                  />
                 </td>
                 <td className="px-4 py-4 text-gray-600 whitespace-nowrap">{row.date}</td>
                 <td className="px-4 py-4 text-gray-600">{row.createdBy}</td>

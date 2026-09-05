@@ -19,6 +19,7 @@ export interface Enquiry {
   providerId?: string | null;
   stateId?: string | null;
   marketplaceProductId?: string | null;
+  adminFlag?: 'READ' | 'ACTIVE' | 'DELETE';
   provider?: { id: string; name: string; stateId?: string } | null;
   state?: { id: string; name: string; code: string | null } | null;
 }

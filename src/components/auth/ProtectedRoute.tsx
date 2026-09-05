@@ -10,6 +10,7 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   '/service-provider/sub-category': 'categories.read',
   '/service-provider/listing': 'providers.read',
   '/app-users': 'users.read',
+  '/app-volunteers': 'users.read',
   '/provider-admins': 'users.read',
   '/state-admins': 'state_admins.read',
   '/enquiries/user': 'enquiries.read',
@@ -26,6 +27,7 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   '/pages': 'cms.read',
   '/blogs': 'cms.read',
   '/jobs': 'cms.read',
+  '/events': 'dashboard.read',
   '/suggestions': 'cms.read',
 };
 

@@ -1,13 +1,16 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { ArrowDownUp, Eye, Plus, Trash2, X } from 'lucide-react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { ArrowDownUp, Eye, Pencil, Plus, Trash2 } from 'lucide-react';
 import { cmsApi, type CmsRecord } from '../api/cms';
-import { uploadsApi } from '../api/uploads';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
 import { Toast } from '../components/common/Toast';
 import { ToggleSwitch } from '../components/common/ToggleSwitch';
 import { BulkImportButton } from '../components/BulkImportButton';
+import { ImageGalleryField } from '../components/ui/ImageGalleryField';
+import { MediaThumb } from '../components/ui/MediaThumb';
+import { LifecycleFlagSelect } from '../components/ui/LifecycleFlagSelect';
+import { statesApi, type State } from '../api/masterData';
 import { formatFaqDate } from '../utils/html';
 
 type MarketplaceProduct = CmsRecord & {
@@ -24,11 +27,15 @@ type MarketplaceProduct = CmsRecord & {
   features?: string | null;
   gallery?: string[];
   isActive?: boolean;
+  stateId?: string | null;
+  approvalStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | string;
+  adminFlag?: 'READ' | 'ACTIVE' | 'DELETE';
   createdAt?: string;
   createdBy?: { id: string; name?: string | null; email?: string | null } | null;
 };
 
 type StatusFilter = 'all' | 'active' | 'inactive';
+type ApprovalFilter = 'all' | 'PENDING' | 'APPROVED' | 'REJECTED';
 type IntentFilter = 'all' | 'sell' | 'buy';
 type View = 'list' | 'form';
 type SortKey =
@@ -40,6 +47,7 @@ type SortKey =
   | 'brand'
   | 'createdBy'
   | 'isActive'
+  | 'approvalStatus'
   | 'createdAt';
 type SortDir = 'asc' | 'desc';
 
@@ -57,10 +65,13 @@ const emptyForm = {
   features: '',
   gallery: [] as string[],
   isActive: true,
+  stateId: '',
+  approvalStatus: 'APPROVED' as 'PENDING' | 'APPROVED' | 'REJECTED',
 };
 
 const COLUMNS: { key: SortKey | null; label: string }[] = [
   { key: null, label: 'S No' },
+  { key: null, label: 'Image' },
   { key: 'name', label: 'Product Name' },
   { key: 'listingIntent', label: 'Intent' },
   { key: 'actualPrice', label: 'Actual Price' },
@@ -68,7 +79,9 @@ const COLUMNS: { key: SortKey | null; label: string }[] = [
   { key: 'color', label: 'Color' },
   { key: 'brand', label: 'Brand' },
   { key: 'createdBy', label: 'Created By' },
+  { key: 'approvalStatus', label: 'Approval' },
   { key: 'isActive', label: 'Status' },
+  { key: null, label: 'Flag' },
   { key: 'createdAt', label: 'Created Date' },
 ];
 
@@ -159,14 +172,14 @@ export const MarketplaceProductsList = () => {
   const [form, setForm] = useState(emptyForm);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [approvalFilter, setApprovalFilter] = useState<ApprovalFilter>('all');
   const [intentFilter, setIntentFilter] = useState<IntentFilter>('all');
+  const [states, setStates] = useState<State[]>([]);
   const [showCount, setShowCount] = useState(10);
   const [sortKey, setSortKey] = useState<SortKey | null>('createdAt');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [galleryUploading, setGalleryUploading] = useState(false);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
   const [viewing, setViewing] = useState<MarketplaceProduct | null>(null);
   const [toast, setToast] = useState<{ visible: boolean; message: string; type: 'success' | 'error' }>({
     visible: false,
@@ -192,6 +205,10 @@ export const MarketplaceProductsList = () => {
   };
 
   useEffect(() => {
+    statesApi.getAll().then(setStates).catch(() => setStates([]));
+  }, []);
+
+  useEffect(() => {
     if (view !== 'list') return;
     const t = setTimeout(load, 250);
     return () => clearTimeout(t);
@@ -210,9 +227,12 @@ export const MarketplaceProductsList = () => {
     return items.filter((item) => {
       if (statusFilter === 'active' && !item.isActive) return false;
       if (statusFilter === 'inactive' && item.isActive) return false;
+      if (approvalFilter !== 'all' && (item.approvalStatus || 'PENDING') !== approvalFilter) {
+        return false;
+      }
       return true;
     });
-  }, [items, statusFilter]);
+  }, [items, statusFilter, approvalFilter]);
 
   const sorted = useMemo(() => {
     if (!sortKey) return filtered;
@@ -244,6 +264,9 @@ export const MarketplaceProductsList = () => {
         case 'isActive':
           cmp = Number(Boolean(a.isActive)) - Number(Boolean(b.isActive));
           break;
+        case 'approvalStatus':
+          cmp = (a.approvalStatus || '').localeCompare(b.approvalStatus || '');
+          break;
         case 'createdAt':
           cmp =
             new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
@@ -261,39 +284,32 @@ export const MarketplaceProductsList = () => {
     setView('form');
   };
 
+  const openEdit = (item: MarketplaceProduct) => {
+    setEditing(item);
+    setForm({
+      name: item.name || '',
+      actualPrice: item.actualPrice || '',
+      offerPrice: item.offerPrice || '',
+      phone: item.phone || '',
+      listingIntent: normalizeIntent(item.listingIntent),
+      sellerName: item.sellerName || '',
+      description: item.description || '',
+      address: item.address || '',
+      color: item.color || '',
+      brand: item.brand || '',
+      features: item.features || '',
+      gallery: item.gallery || [],
+      isActive: item.isActive !== false,
+      stateId: item.stateId || '',
+      approvalStatus: (item.approvalStatus as 'PENDING' | 'APPROVED' | 'REJECTED') || 'PENDING',
+    });
+    setView('form');
+  };
+
   const backToList = () => {
     setView('list');
     setEditing(null);
     setForm(emptyForm);
-  };
-
-  const handleGalleryUpload = async (files: FileList | null) => {
-    if (!files?.length) return;
-    setGalleryUploading(true);
-    try {
-      const urls: string[] = [];
-      for (const file of Array.from(files)) {
-        const result = await uploadsApi.uploadImage(file);
-        urls.push(result.url);
-      }
-      setForm((prev) => ({ ...prev, gallery: [...prev.gallery, ...urls] }));
-    } catch (err) {
-      setToast({
-        visible: true,
-        message: err instanceof Error ? err.message : 'Image upload failed',
-        type: 'error',
-      });
-    } finally {
-      setGalleryUploading(false);
-      if (galleryInputRef.current) galleryInputRef.current.value = '';
-    }
-  };
-
-  const removeGalleryImage = (index: number) => {
-    setForm((prev) => ({
-      ...prev,
-      gallery: prev.gallery.filter((_, i) => i !== index),
-    }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -319,6 +335,8 @@ export const MarketplaceProductsList = () => {
         features: form.features.trim() || undefined,
         gallery: form.gallery,
         isActive: form.isActive,
+        stateId: form.stateId || undefined,
+        approvalStatus: form.approvalStatus,
       };
       if (editing) await api.update(editing.id, payload);
       else await api.create(payload);
@@ -363,6 +381,23 @@ export const MarketplaceProductsList = () => {
       setToast({
         visible: true,
         message: err instanceof Error ? err.message : 'Status update failed',
+        type: 'error',
+      });
+    }
+  };
+
+  const handleApproval = async (
+    item: MarketplaceProduct,
+    approvalStatus: 'PENDING' | 'APPROVED' | 'REJECTED',
+  ) => {
+    try {
+      await api.update(item.id, { approvalStatus });
+      setItems((rows) => rows.map((r) => (r.id === item.id ? { ...r, approvalStatus } : r)));
+      setToast({ visible: true, message: `Marked ${approvalStatus.toLowerCase()}`, type: 'success' });
+    } catch (err) {
+      setToast({
+        visible: true,
+        message: err instanceof Error ? err.message : 'Approval update failed',
         type: 'error',
       });
     }
@@ -480,49 +515,11 @@ export const MarketplaceProductsList = () => {
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="mb-1 block text-sm font-semibold text-gray-800">Product Images</label>
-                <div className="flex flex-wrap items-center gap-2">
-                  <input
-                    ref={galleryInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif"
-                    multiple
-                    className="hidden"
-                    onChange={(e) => handleGalleryUpload(e.target.files)}
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    disabled={galleryUploading}
-                    onClick={() => galleryInputRef.current?.click()}
-                  >
-                    {galleryUploading ? 'Uploading…' : 'Upload images'}
-                  </Button>
-                  <span className="text-xs text-gray-500">JPEG, PNG, WebP or GIF</span>
-                </div>
-                {form.gallery.length > 0 ? (
-                  <div className="mt-3 flex flex-wrap gap-3">
-                    {form.gallery.map((url, index) => (
-                      <div key={`${url}-${index}`} className="relative">
-                        <img
-                          src={url}
-                          alt=""
-                          className="h-24 w-24 rounded-md border border-gray-200 object-cover"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeGalleryImage(index)}
-                          className="absolute -right-2 -top-2 rounded-full bg-red-500 p-0.5 text-white shadow hover:bg-red-600"
-                          title="Remove image"
-                        >
-                          <X size={12} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-2 text-xs text-gray-500">No images uploaded yet.</p>
-                )}
+                <ImageGalleryField
+                  label="Product Images"
+                  value={form.gallery}
+                  onChange={(gallery) => setForm((prev) => ({ ...prev, gallery }))}
+                />
               </div>
               <div className="md:col-span-2">
                 <label className="mb-1 block text-sm font-semibold text-gray-800">Description</label>
@@ -542,6 +539,40 @@ export const MarketplaceProductsList = () => {
               />
               Active
             </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-gray-800">State</label>
+                <select
+                  value={form.stateId}
+                  onChange={(e) => setForm((prev) => ({ ...prev, stateId: e.target.value }))}
+                  className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
+                >
+                  <option value="">Unassigned</option>
+                  {states.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-gray-800">Approval</label>
+                <select
+                  value={form.approvalStatus}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      approvalStatus: e.target.value as 'PENDING' | 'APPROVED' | 'REJECTED',
+                    }))
+                  }
+                  className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
+                >
+                  <option value="PENDING">Pending</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </div>
+            </div>
             <div className="flex gap-2 pt-2">
               <Button type="submit" disabled={saving}>
                 {saving ? 'Submitting…' : 'Submit'}
@@ -618,6 +649,19 @@ export const MarketplaceProductsList = () => {
                 <option value="inactive">Inactive</option>
               </select>
             </div>
+            <div>
+              <label className="mb-1 block text-sm font-semibold text-gray-700">Approval</label>
+              <select
+                value={approvalFilter}
+                onChange={(e) => setApprovalFilter(e.target.value as ApprovalFilter)}
+                className="h-10 rounded-md border border-gray-300 px-3 text-sm"
+              >
+                <option value="all">All</option>
+                <option value="PENDING">Pending</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </div>
             {/* <Button type="button" variant="primary" className="h-10" onClick={load}>
               Filter
             </Button> */}
@@ -654,7 +698,7 @@ export const MarketplaceProductsList = () => {
               <tbody className="divide-y divide-gray-100">
                 {paged.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={14} className="px-4 py-8 text-center text-gray-500">
                       No products found
                     </td>
                   </tr>
@@ -664,6 +708,18 @@ export const MarketplaceProductsList = () => {
                     return (
                       <tr key={item.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
                         <td className="px-4 py-3 text-gray-600">{index + 1}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-1.5">
+                            <MediaThumb
+                              src={item.gallery?.[0]}
+                              alt={item.name}
+                              className="h-12 w-12 rounded-md border border-gray-200 object-cover"
+                            />
+                            {item.gallery && item.gallery.length > 1 ? (
+                              <span className="text-xs text-gray-500">+{item.gallery.length - 1}</span>
+                            ) : null}
+                          </div>
+                        </td>
                         <td className="px-4 py-3 font-medium text-gray-800">{item.name}</td>
                         <td className="px-4 py-3">
                           <IntentBadge value={item.listingIntent} />
@@ -694,9 +750,40 @@ export const MarketplaceProductsList = () => {
                         </td>
                         <td className="px-4 py-3 text-gray-600">{createdBy || '—'}</td>
                         <td className="px-4 py-3">
+                          <select
+                            value={item.approvalStatus || 'PENDING'}
+                            onChange={(e) =>
+                              handleApproval(
+                                item,
+                                e.target.value as 'PENDING' | 'APPROVED' | 'REJECTED',
+                              )
+                            }
+                            className="h-8 rounded-md border border-gray-300 px-2 text-xs"
+                          >
+                            <option value="PENDING">Pending</option>
+                            <option value="APPROVED">Approved</option>
+                            <option value="REJECTED">Rejected</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-3">
                           <ToggleSwitch
                             checked={Boolean(item.isActive)}
                             onChange={(checked) => handleStatusToggle(item, checked)}
+                          />
+                        </td>
+                        <td className="px-4 py-3">
+                          <LifecycleFlagSelect
+                            entity="marketplaceProduct"
+                            id={item.id}
+                            value={item.adminFlag}
+                            onChanged={(flag) =>
+                              setItems((rows) =>
+                                rows.map((r) => (r.id === item.id ? { ...r, adminFlag: flag } : r)),
+                              )
+                            }
+                            onError={(message) =>
+                              setToast({ visible: true, message, type: 'error' })
+                            }
                           />
                         </td>
                         <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
@@ -711,6 +798,14 @@ export const MarketplaceProductsList = () => {
                               title="Delete"
                             >
                               <Trash2 size={15} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => openEdit(item)}
+                              className="rounded bg-blue-50 p-1.5 text-blue-600 hover:bg-blue-100"
+                              title="Edit"
+                            >
+                              <Pencil size={15} />
                             </button>
                             <button
                               type="button"
@@ -794,7 +889,7 @@ export const MarketplaceProductsList = () => {
                 <p className="mb-2 text-xs font-semibold uppercase text-gray-500">Gallery</p>
                 <div className="flex flex-wrap gap-2">
                   {viewing.gallery.map((url) => (
-                    <img
+                    <MediaThumb
                       key={url}
                       src={url}
                       alt=""

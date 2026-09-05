@@ -14,6 +14,7 @@ import {
   FileText,
   Newspaper,
   Briefcase,
+  CalendarDays,
   Lightbulb,
   CreditCard,
   ChevronRight,
@@ -55,7 +56,10 @@ const ALL_NAV_ITEMS: NavItem[] = [
     title: 'App user',
     icon: <User size={18} />,
     permission: 'users.read',
-    children: [{ title: 'Listing', href: '/app-users', permission: 'users.read' }],
+    children: [
+      { title: 'Listing', href: '/app-users', permission: 'users.read' },
+      { title: 'Volunteers', href: '/app-volunteers', permission: 'users.read' },
+    ],
   },
   {
     title: 'State Admin',
@@ -87,6 +91,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { title: 'Pages', icon: <FileText size={18} />, href: '/pages', permission: 'cms.read' },
   { title: 'Blogs', icon: <Newspaper size={18} />, href: '/blogs', permission: 'cms.read' },
   { title: 'Job alerts', icon: <Briefcase size={18} />, href: '/jobs', permission: 'cms.read' },
+  { title: 'Events', icon: <CalendarDays size={18} />, href: '/events', permission: 'dashboard.read' },
   { title: 'Suggestions', icon: <Lightbulb size={18} />, href: '/suggestions', permission: 'cms.read' },
 ];
 

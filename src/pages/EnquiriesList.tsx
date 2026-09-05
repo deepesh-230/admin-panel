@@ -161,6 +161,12 @@ export const EnquiriesList = ({ kind, title }: Props) => {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onStatusChange={handleStatusChange}
+            onFlagChange={(item, flag) =>
+              setEnquiriesData((rows) =>
+                rows.map((r) => (r.id === item.id ? { ...r, adminFlag: flag } : r)),
+              )
+            }
+            onFlagError={(message) => setToast({ visible: true, message, type: 'error' })}
           />
         )}
       </div>
