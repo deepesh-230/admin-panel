@@ -29,6 +29,7 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   '/jobs': 'cms.read',
   '/events': 'dashboard.read',
   '/suggestions': 'cms.read',
+  '/settings/permissions': 'settings.write',
 };
 
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {

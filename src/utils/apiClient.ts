@@ -141,6 +141,11 @@ export const apiClient = {
       body: data === undefined ? undefined : JSON.stringify(data),
     }),
   delete: <T>(endpoint: string) => apiRequest<T>(endpoint, { method: 'DELETE' }),
+  put: <T>(endpoint: string, data?: unknown) =>
+    apiRequest<T>(endpoint, {
+      method: 'PUT',
+      body: data === undefined ? undefined : JSON.stringify(data),
+    }),
   /** Multipart upload — do not set Content-Type (browser sets boundary). */
   upload: async <T>(endpoint: string, file: File, fieldName = 'file'): Promise<T> => {
     const form = new FormData();

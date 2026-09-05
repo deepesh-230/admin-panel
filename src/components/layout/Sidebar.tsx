@@ -17,6 +17,7 @@ import {
   CalendarDays,
   Lightbulb,
   CreditCard,
+  Settings,
   ChevronRight,
   ChevronDown,
   PanelLeftClose,
@@ -93,6 +94,14 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { title: 'Job alerts', icon: <Briefcase size={18} />, href: '/jobs', permission: 'cms.read' },
   { title: 'Events', icon: <CalendarDays size={18} />, href: '/events', permission: 'dashboard.read' },
   { title: 'Suggestions', icon: <Lightbulb size={18} />, href: '/suggestions', permission: 'cms.read' },
+  {
+    title: 'Settings',
+    icon: <Settings size={18} />,
+    permission: 'settings.write',
+    children: [
+      { title: 'Access control', href: '/settings/permissions', permission: 'settings.write' },
+    ],
+  },
 ];
 
 function filterNavItems(

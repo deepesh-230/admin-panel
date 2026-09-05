@@ -22,6 +22,7 @@ import { JobAlertsList } from './pages/JobAlertsList';
 import { SuggestionsList } from './pages/SuggestionsList';
 import { UsefulLinksList } from './pages/UsefulLinksList';
 import { EventsList } from './pages/EventsList';
+import { PermissionsConfigPage } from './pages/PermissionsConfigPage';
 import {
   BlogsPage,
   HelpSupportPage,
@@ -110,6 +111,7 @@ function App() {
                     <Route path="/jobs" element={<JobAlertsList />} />
                     <Route path="/events" element={<EventsList />} />
                     <Route path="/suggestions" element={<SuggestionsList />} />
+                    <Route path="/settings/permissions" element={<PermissionsConfigPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </Layout>
